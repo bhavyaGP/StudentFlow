@@ -1,26 +1,27 @@
 const express = require('express');
 const app = express();
-const cookieParser = require('cookie-parser');
-const dotenv = require('dotenv');
 const db = require('./connection');
-const port = process.env.PORT || 3000;
-dotenv.config();
+const PORT = process.env.PORT || 3000;
+const cors = require('cors');
+const authRoutes = require('./routes/authroutes');
 
+
+app.use(cors())
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
 
-//router
-
-app.use('/', require('./routes/staticRoutes'));
-
-//improting student model
-const Student = require('./models/student');
+app.use('/api/auth', authRoutes);
 
 
-
-app.get('/', async (req, res) => {
-    res.send('Server is running');
+app.use((err, req, res, next) => {
+    err.statuscode = err.statuscode || 500;
+    err.status = err.status || 'error';
+    res.status(err.statuscode).json({
+        status: err.status,
+        message: err.message
+    });
 });
 
-app.listen(port, () => console.log(`Server started on port ${port}`));
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});

@@ -1,6 +1,6 @@
-require('dotenv').config();
 const mongoose = require('mongoose');
-const mongoUrl = 'mongodb://localhost:27017/StudentOverFlow';
+// require('dotenv').config();
+const mongoUrl = 'mongodb://localhost:27017/myproject';
 // const mongoUrl = process.env.mongoUrl ;
 mongoose.set('strictQuery', true);
 
