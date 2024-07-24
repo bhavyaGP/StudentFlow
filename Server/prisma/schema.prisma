@@ -1,0 +1,116 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL") 
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Activity Model
+model Activity {
+  activity_id   Int      @id @default(autoincrement())
+  activity_name String
+  student_activity StudentActivity[]
+}
+
+// Attendance Model
+model Attendance {
+  attendance_id Int      @id @default(autoincrement())
+  student_id    Int
+  date          DateTime
+  status        String // Change to enum if you have specific statuses
+  student       Student  @relation(fields: [student_id], references: [stud_id])
+}
+
+// Grades Model
+model Grades {
+  grade_id        Int      @id @default(autoincrement())
+  student_id      Int
+  subject_id      Int
+  marks_obtained  Int
+  max_marks       Int
+  year            Int
+  term            String
+  student         Student   @relation(fields: [student_id], references: [stud_id])
+  subject         Subject   @relation(fields: [subject_id], references: [subject_id])
+}
+
+// Learning Outcomes Model
+model LearningOutcomes {
+  outcome_id        Int      @id @default(autoincrement())
+  student_id        Int
+  subject_id        Int
+  outcome_description String
+  achieved          String // Change to enum if you have specific statuses
+  date              DateTime
+  student           Student   @relation(fields: [student_id], references: [stud_id])
+  subject           Subject   @relation(fields: [subject_id], references: [subject_id])
+}
+
+// School Schema Model
+model SchoolSchema {
+  school_id    Int      @id @default(autoincrement())
+  school_name  String
+  school_dist  String
+  school_add   String
+  total_stud   Int
+  award_win    Int
+  students     Student[]
+  teachers     Teacher[]
+}
+
+// Student Model
+model Student {
+  stud_id        Int      @id @default(autoincrement())
+  stud_fname     String
+  stud_lname     String
+  stud_std       Int
+  DOB            DateTime
+  parent_contact String
+  teacher_id     Int?
+  school_id      Int?
+  attendance     Attendance[]
+  grades         Grades[]
+  learning_outcomes LearningOutcomes[]
+  activities     StudentActivity[]
+  teacher        Teacher?  @relation(fields: [teacher_id], references: [teacher_id])
+  school         SchoolSchema? @relation(fields: [school_id], references: [school_id])
+}
+
+// Student Activity Model
+model StudentActivity {
+  student_id  Int
+  activity_id Int
+  student     Student   @relation(fields: [student_id], references: [stud_id])
+  activity    Activity  @relation(fields: [activity_id], references: [activity_id])
+  @@id([student_id, activity_id]) // Composite primary key
+}
+
+// Subject Model
+model Subject {
+  subject_id    Int      @id @default(autoincrement())
+  subject_name  String
+  grades        Grades[]
+  learning_outcomes LearningOutcomes[]
+}
+
+// Teacher Model
+model Teacher {
+  teacher_id         Int      @id @default(autoincrement())
+  teacher_fname      String
+  teacher_lname      String
+  allocated_standard String
+  teacher_email      String  @unique
+  school_id          Int?
+  password           String
+  students           Student[]
+  school             SchoolSchema? @relation(fields: [school_id], references: [school_id])
+}
+
