@@ -74,14 +74,14 @@ model Student {
   stud_std       Int
   DOB            DateTime
   parent_contact String
-  teacher_id     Int?
-  school_id      Int?
+  teacher_id     Int
+  school_id      Int
   attendance     Attendance[]
   grades         Grades[]
   learning_outcomes LearningOutcomes[]
   activities     StudentActivity[]
-  teacher        Teacher?  @relation(fields: [teacher_id], references: [teacher_id])
-  school         SchoolSchema? @relation(fields: [school_id], references: [school_id])
+  teacher        Teacher  @relation(fields: [teacher_id], references: [teacher_id])
+  school         SchoolSchema @relation(fields: [school_id], references: [school_id])
 }
 
 // Student Activity Model
@@ -104,13 +104,14 @@ model Subject {
 // Teacher Model
 model Teacher {
   teacher_id         Int      @id @default(autoincrement())
+  username           String  @unique @db.VarChar(20)  // Mark username as unique
   teacher_fname      String
   teacher_lname      String
   allocated_standard String
   teacher_email      String  @unique
-  school_id          Int?
+  school_id          Int
   password           String
+  DOB                DateTime
   students           Student[]
-  school             SchoolSchema? @relation(fields: [school_id], references: [school_id])
+  school             SchoolSchema @relation(fields: [school_id], references: [school_id])
 }
-

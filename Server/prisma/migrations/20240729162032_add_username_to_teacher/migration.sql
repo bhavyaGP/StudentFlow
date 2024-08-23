@@ -61,8 +61,8 @@ CREATE TABLE `Student` (
     `stud_std` INTEGER NOT NULL,
     `DOB` DATETIME(3) NOT NULL,
     `parent_contact` VARCHAR(191) NOT NULL,
-    `teacher_id` INTEGER NULL,
-    `school_id` INTEGER NULL,
+    `teacher_id` INTEGER NOT NULL,
+    `school_id` INTEGER NOT NULL,
 
     PRIMARY KEY (`stud_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -90,8 +90,12 @@ CREATE TABLE `Teacher` (
     `teacher_lname` VARCHAR(191) NOT NULL,
     `allocated_standard` VARCHAR(191) NOT NULL,
     `teacher_email` VARCHAR(191) NOT NULL,
-    `school_id` INTEGER NULL,
+    `school_id` INTEGER NOT NULL,
+    `password` VARCHAR(191) NOT NULL,
+    `DOB` DATETIME(3) NOT NULL,
+    `username` VARCHAR(20) NOT NULL,
 
+    UNIQUE INDEX `Teacher_teacher_email_key`(`teacher_email`),
     PRIMARY KEY (`teacher_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -111,10 +115,10 @@ ALTER TABLE `LearningOutcomes` ADD CONSTRAINT `LearningOutcomes_student_id_fkey`
 ALTER TABLE `LearningOutcomes` ADD CONSTRAINT `LearningOutcomes_subject_id_fkey` FOREIGN KEY (`subject_id`) REFERENCES `Subject`(`subject_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Student` ADD CONSTRAINT `Student_teacher_id_fkey` FOREIGN KEY (`teacher_id`) REFERENCES `Teacher`(`teacher_id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `Student` ADD CONSTRAINT `Student_teacher_id_fkey` FOREIGN KEY (`teacher_id`) REFERENCES `Teacher`(`teacher_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Student` ADD CONSTRAINT `Student_school_id_fkey` FOREIGN KEY (`school_id`) REFERENCES `SchoolSchema`(`school_id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `Student` ADD CONSTRAINT `Student_school_id_fkey` FOREIGN KEY (`school_id`) REFERENCES `SchoolSchema`(`school_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `StudentActivity` ADD CONSTRAINT `StudentActivity_student_id_fkey` FOREIGN KEY (`student_id`) REFERENCES `Student`(`stud_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -123,4 +127,4 @@ ALTER TABLE `StudentActivity` ADD CONSTRAINT `StudentActivity_student_id_fkey` F
 ALTER TABLE `StudentActivity` ADD CONSTRAINT `StudentActivity_activity_id_fkey` FOREIGN KEY (`activity_id`) REFERENCES `Activity`(`activity_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Teacher` ADD CONSTRAINT `Teacher_school_id_fkey` FOREIGN KEY (`school_id`) REFERENCES `SchoolSchema`(`school_id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `Teacher` ADD CONSTRAINT `Teacher_school_id_fkey` FOREIGN KEY (`school_id`) REFERENCES `SchoolSchema`(`school_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
