@@ -17,9 +17,7 @@ router.get("/uploadfile", authenticateTeacher, (req, res) => {
     return res.render("homepage");
 });
 
-router.get("/start", (req, res) => {
-    return res.render("login");
-});
+
 
 // Public routes
 router.post('/login', loginTeacher);
@@ -28,7 +26,7 @@ router.post('/login', loginTeacher);
 router.get('/report', authenticateTeacher, getReport); // Requires authentication
 router.post('/addstudent', authenticateTeacher, upload.single("excelFile"), addstudent);
 router.post('/uploadmarks', authenticateTeacher, upload.single("excelFile"), addmarks);
-router.get('allstudent', authenticateTeacher, showsAlltudents)
+router.get('/allstudent', authenticateTeacher, showsAlltudents)
 
 
 // router.post('/upload', upload.single("excelFile"), updatestudent);

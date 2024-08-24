@@ -5,7 +5,7 @@ require('dotenv').config();
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 const staticroutes = require('./routes/static.js');
-const { checkauth } = require('./middleware/auth.js');
+const { checkAuth } = require('./middleware/basicauth.js');
 
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
@@ -28,7 +28,7 @@ const adminRoutes = require('./routes/admin.js');
 // Use the defined routes
 app.use('/api/teacher', teacherRoutes);
 app.use('/api/admin', adminRoutes);
-app.use("/",checkauth,staticroutes)
+app.use("/",checkAuth,staticroutes)
 
 // Start the server
 app.listen(PORT, () => {

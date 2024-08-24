@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const { setUser } = require('../services/auth.js');
 const csvtojson = require('csvtojson');
 const fs = require('fs');
 const path = require('path');
@@ -31,19 +32,15 @@ async function loginTeacher(req, res) {
             return res.status(400).json({ error: 'Invalid username or password' });
         }
 
-        // Generate a JWT token with the teacher's ID
-        const token = jwt.sign(
-            { id: teacher.teacher_id },
-            process.env.JWT_SECRET,
-            { expiresIn: '4h' } // Token expires in 4 hours
-        );
+        // Set User
+        const token = setUser(teacher);
 
         res.cookie('authToken', token, {
             httpOnly: true, // This makes the cookie inaccessible to JavaScript on the client side
             maxAge: 4 * 60 * 60 * 1000, // Cookie expires in 4 hours
         });
 
-        res.json({ message: 'Login successful' });
+        res.json({ message: 'Login successful then will be redirect to home ' });
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ error: 'Failed to login', details: error.message });
@@ -310,7 +307,7 @@ async function addmarks(req, res) {
 }
 
 async function showsAlltudents(req, res) {
-
+    res.send("All students");   
 }
 
 module.exports = { loginTeacher, getReport, addstudent, addmarks, showsAlltudents };
