@@ -6,7 +6,7 @@ function setUser(teacher) {
             id: teacher.teacher_id
         },
         process.env.JWT_SECRET,
-        { expiresIn: '1h' }
+        { expiresIn: '2h' }
     );
 }
 
