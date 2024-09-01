@@ -70,7 +70,6 @@ async function registerTeacher(req, res) {
             html: `<p>Welcome to the School Management System. Your username is  ${username} and password is ${ddmmyyyyPassword} and your allocated standard is ${allocated_standard} for our school  website. </p>`,
         };
         sendMail(emailData);
-
         res.status(201).json(newTeacher);
     } catch (error) {
         console.error('Error creating teacher:', error);
