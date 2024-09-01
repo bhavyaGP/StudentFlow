@@ -26,9 +26,9 @@ const teacherRoutes = require('./routes/teacher.js');
 const adminRoutes = require('./routes/admin.js');
 
 // Use the defined routes
-app.use('/api/teacher', teacherRoutes);
+app.use("/",staticroutes);
 app.use('/api/admin', adminRoutes);
-app.use("/",checkAuth,staticroutes)
+app.use('/api/teacher', teacherRoutes);
 
 // Start the server
 app.listen(PORT, () => {

@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const { HandleTeacherLogin, getReport, addstudent, addmarks, showsAllStudents, addactivitymarks } = require('../controllers/teacher.js');
 const { authenticateTeacher } = require('../middleware/authteacher.js');
+const { route } = require('./static.js');
 const router = express.Router();
 const upload = multer({ dest: 'uploads/' });
 const storage = multer.diskStorage({
@@ -13,6 +14,10 @@ const storage = multer.diskStorage({
     },
 });
 
+
+router.get("/", (req, res) => {
+    return res.send("Welcome to the teacher homepage");
+});
 router.get("/uploadfile", authenticateTeacher, (req, res) => {
     return res.render("homepage");
 });
@@ -26,8 +31,7 @@ router.get("/activitymarks", authenticateTeacher, (req, res) => {
 });
 
 
-// Public routes
-router.post('/login', HandleTeacherLogin);
+
 
 // Protected routes
 router.get('/report', authenticateTeacher, getReport); // Requires authentication

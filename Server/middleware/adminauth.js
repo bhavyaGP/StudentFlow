@@ -1,26 +1,26 @@
 const jwt = require('jsonwebtoken');
 const { getUser } = require('../services/auth.js');
 
-function authenticateTeacher(req, res, next) {
-    console.log('Authenticating teacher');
+function restrictedtoadminonly(req, res, next) {
+    console.log('Authenticating admin...');
     try {
         const token = req.cookies?.authToken;
-        console.log('Token:', token);
+        // console.log('Token:', token);
 
         if (!token) {
             return res.redirect('/login');
         }
 
-    
-        const user = getUser(token);
-        console.log(user);
 
-        if (user.role !== 'teacher') {
-            return res.status(403).json({ error: 'Forbidden: Only teachers can access this route' });
+        const user = getUser(token);
+        // console.log(user);  
+
+        if (user.role !== 'admin') {
+            return res.status(403).json({ error: 'Forbidden: Only admin can access this route' });
         }
 
-        req.teacherId = user.id;
-        console.log('Authenticated teacher:', req.teacherId);
+        req.adminID = user.id;
+        console.log('Authenticated admin:', req.adminID);
 
         next();
     } catch (error) {
@@ -34,4 +34,4 @@ function authenticateTeacher(req, res, next) {
 
 
 
-module.exports = { authenticateTeacher };
+module.exports = { restrictedtoadminonly };

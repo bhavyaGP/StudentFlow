@@ -8,44 +8,6 @@ const path = require('path');
 
 
 
-async function HandleTeacherLogin(req, res) {
-    const { user, password } = req.body;
-    console.log(user, password);
-
-    // Check if both username and password are provided
-    if (!user || !password) {
-        return res.status(400).json({ error: 'Username and password are required' });
-    }
-
-    try {
-        // Find the first teacher by username
-        const teacher = await prisma.teacher.findUnique({
-            where: { username: user }
-        });
-
-        if (!teacher) {
-            return res.status(400).json({ error: 'Invalid username or password' });
-        }
-
-        if (password !== teacher.password) {
-            return res.status(400).json({ error: 'Invalid username or password' });
-        }
-        console.log(teacher.teacher_fname, teacher.teacher_lname);
-
-        // Set User
-        const token = setUser(teacher)
-
-        res.cookie('authToken', token, {
-            httpOnly: true, // This makes the cookie inaccessible to JavaScript on the client side
-            maxAge: 4 * 60 * 60 * 1000, // Cookie expires in 4 hours
-        });
-
-        res.json({ message: 'Login successful then will be redirect to home ', token });
-    } catch (error) {
-        console.error('Login error:', error);
-        res.status(500).json({ error: 'Failed to login', details: error.message });
-    }
-}
 
 
 async function getReport(req, res) {
@@ -405,4 +367,4 @@ async function addactivitymarks(req, res) {
     }
 }
 
-module.exports = { HandleTeacherLogin, getReport, addstudent, addmarks, showsAllStudents, addactivitymarks };
+module.exports = { getReport, addstudent, addmarks, showsAllStudents, addactivitymarks };
