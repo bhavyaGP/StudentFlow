@@ -40,6 +40,4 @@ router.post('/uploadmarks', authenticateTeacher, upload.single("excelFile"), add
 router.get('/allstudent', authenticateTeacher, showsAllStudents)
 router.post('/activitymarks', authenticateTeacher, upload.single("excelFile"), addactivitymarks)
 
-
-
 module.exports = router;
