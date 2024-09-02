@@ -38,6 +38,8 @@ router.get('/report', authenticateTeacher, getReport); // Requires authenticatio
 router.post('/addstudent', authenticateTeacher, upload.single("excelFile"), addstudent);
 router.post('/uploadmarks', authenticateTeacher, upload.single("excelFile"), addmarks);
 router.get('/allstudent', authenticateTeacher, showsAllStudents)
-router.post('/activitymarks', authenticateTeacher, upload.single("excelFile"), addactivitymarks)
+router.post('/activitymarks', authenticateTeacher, upload.single("excelFile"), addactivitymarks);
+
+
 
 module.exports = router;
