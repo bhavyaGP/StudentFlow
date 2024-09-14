@@ -15,9 +15,9 @@ generator client {
 
 // Activity Model
 model Activity {
-  activity_id   Int      @id @default(autoincrement())
-  activity_name String
-  student_activity StudentActivity[]
+  activity_id      Int             @id @default(autoincrement())
+  activity_name    String
+  student_activity ActivityMarks[] // Updated to reference ActivityMarks
 }
 
 // Attendance Model
@@ -44,14 +44,14 @@ model Grades {
 
 // Learning Outcomes Model
 model LearningOutcomes {
-  outcome_id        Int      @id @default(autoincrement())
-  student_id        Int
-  subject_id        Int
+  outcome_id          Int      @id @default(autoincrement())
+  student_id          Int
+  subject_id          Int
   outcome_description String
-  achieved          String // Change to enum if you have specific statuses
-  date              DateTime
-  student           Student   @relation(fields: [student_id], references: [stud_id])
-  subject           Subject   @relation(fields: [subject_id], references: [subject_id])
+  achieved            String // Change to enum if you have specific statuses
+  date                DateTime
+  student             Student   @relation(fields: [student_id], references: [stud_id])
+  subject             Subject   @relation(fields: [subject_id], references: [subject_id])
 }
 
 // School Schema Model
@@ -79,18 +79,24 @@ model Student {
   attendance     Attendance[]
   grades         Grades[]
   learning_outcomes LearningOutcomes[]
-  activities     StudentActivity[]
+  activities         ActivityMarks[] // Updated to reference ActivityMarks
   teacher        Teacher  @relation(fields: [teacher_id], references: [teacher_id])
   school         SchoolSchema @relation(fields: [school_id], references: [school_id])
 }
 
-// Student Activity Model
-model StudentActivity {
-  student_id  Int
-  activity_id Int
-  student     Student   @relation(fields: [student_id], references: [stud_id])
-  activity    Activity  @relation(fields: [activity_id], references: [activity_id])
-  @@id([student_id, activity_id]) // Composite primary key
+// ActivityMarks Model (Replaces StudentActivity)
+model ActivityMarks {
+  activity_marks_id Int      @id @default(autoincrement())  // Primary Key
+  student_id        Int
+  activity_id       Int
+  marks_obtained    Decimal  @db.Decimal(10, 2)  
+  total_marks       Decimal  @db.Decimal(10, 2)  
+  grade             String   
+  
+  student           Student  @relation(fields: [student_id], references: [stud_id])
+  activity          Activity @relation(fields: [activity_id], references: [activity_id])
+
+  @@unique([student_id, activity_id])  // This pair Combination will always make one unique value
 }
 
 // Subject Model

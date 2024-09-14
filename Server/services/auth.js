@@ -1,12 +1,25 @@
 const jwt = require('jsonwebtoken');
 
-function setUser(teacher) {
+function setTeacher(teacher) {
     return jwt.sign(
         {
-            id: teacher.teacher_id
+            id: teacher.teacher_id,
+            role: 'teacher'
         },
         process.env.JWT_SECRET,
-        { expiresIn: '1h' }
+        { expiresIn: '2h' }
+    );
+}
+
+
+function setAdmin(admin) {
+    return jwt.sign(
+        {
+            id: admin.admin_id,
+            role: 'admin'
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: '2h' }
     );
 }
 
@@ -20,7 +33,9 @@ function getUser(token) {
 }
 
 
+
 module.exports = {
-    setUser,
+    setTeacher,
+    setAdmin,
     getUser
 }

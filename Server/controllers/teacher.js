@@ -7,55 +7,22 @@ const fs = require('fs');
 const path = require('path');
 
 
-// Corrected loginTeacher function
 
-async function loginTeacher(req, res) {
-    const { user, password } = req.body;
-    console.log(user, password);
-
-    // Check if both username and password are provided
-    if (!user || !password) {
-        return res.status(400).json({ error: 'Username and password are required' });
-    }
-
-    try {
-        // Find the first teacher by username
-        const teacher = await prisma.teacher.findUnique({
-            where: { username: user }
-        });
-
-        if (!teacher) {
-            return res.status(400).json({ error: 'Invalid username or password' });
-        }
-
-        if (password !== teacher.password) {
-            return res.status(400).json({ error: 'Invalid username or password' });
-        }
-
-        // Set User
-        const token = setUser(teacher);
-
-        res.cookie('authToken', token, {
-            httpOnly: true, // This makes the cookie inaccessible to JavaScript on the client side
-            maxAge: 4 * 60 * 60 * 1000, // Cookie expires in 4 hours
-        });
-
-        res.json({ message: 'Login successful then will be redirect to home ' });
-    } catch (error) {
-        console.error('Login error:', error);
-        res.status(500).json({ error: 'Failed to login', details: error.message });
-    }
-}
 
 
 async function getReport(req, res) {
     try {
-        const teacherId = req.teacherId; // Get teacher ID from the authenticated teacher
-        const { rollno } = req.query; // Get roll number from query parameters
+        console.log("In getReport function");
+
+        // const teacherid = req.teacherId; // Get teacher ID from the authenticated teacher
+        // const { rollno } = req.query; // Get roll number from query parameters
+        const teacherid = req.teacherId;
+        const rollno = req.query.rollno;
+        console.log(teacherid, rollno);
 
         // Find the teacher to get the standard they are responsible for
         const teacher = await prisma.teacher.findUnique({
-            where: { teacher_id: parseInt(teacherId) },
+            where: { teacher_id: teacherid },
             include: {
                 students: true // Assuming the Teacher model has a relation to Student model
             }
@@ -65,12 +32,13 @@ async function getReport(req, res) {
             return res.status(404).json({ error: 'Teacher not found' });
         }
 
-        // Find the standard/class the teacher is responsible for
         const standard = teacher.students[0]?.stud_std; // Assuming teacher is only assigned to one standard
+
 
         if (!standard) {
             return res.status(404).json({ error: 'No standard found for the teacher' });
         }
+        console.log("Standard:", standard);
 
         // Find the student based on roll number and standard
         const student = await prisma.student.findFirst({
@@ -151,7 +119,7 @@ async function getReport(req, res) {
             }))
         };
 
-        // Send the report as a JSON response
+        console.log("report generated");
         return res.json(report);
 
     } catch (error) {
@@ -160,8 +128,29 @@ async function getReport(req, res) {
     }
 }
 
+function ConverttedDate(date) {
+    const parts = date.split('-');
+    const day = parseInt(parts[0]);
+    const month = parseInt(parts[1]) - 1;
+    const year = parseInt(parts[2]);
+    return new Date(year, month, day);
+}
+
+async function convertCSVtoJSON(csvFilePath) {
+    try {
+        const jsonObj = await csvtojson().fromFile(csvFilePath);
+        const jsonFilePath = `./uploads/${path.parse(csvFilePath).name}.json`;
+        await fs.promises.writeFile(jsonFilePath, JSON.stringify(jsonObj, null, 2));
+        console.log("JSON file saved:", jsonFilePath);
+        return jsonObj;
+    } catch (error) {
+        console.error("Error converting CSV to JSON:", error);
+        throw new Error("Error converting CSV to JSON");
+    }
+}
+
 async function addstudent(req, res) {
-    console.log("In updatestudent function");
+    console.log("In addstudent function");
 
     if (!req.file) {
         return res.status(400).send("No files were uploaded.");
@@ -170,63 +159,41 @@ async function addstudent(req, res) {
     const csvFilePath = req.file.path;
 
     try {
-        // Convert CSV to JSON
-        const jsonObj = await csvtojson().fromFile(csvFilePath);
+        const jsonObj = await convertCSVtoJSON(csvFilePath);
 
-        const jsonFilePath = `./uploads/${path.parse(csvFilePath).name}.json`;
-        await fs.promises.writeFile(jsonFilePath, JSON.stringify(jsonObj, null, 2));
-        console.log("JSON file saved:", jsonFilePath);
+        // Get teacher ID from the request (assumed to be stored in req.teacherId)
+        const parsedTeacherId = req.teacherId;
 
+        // Find the school ID associated with the teacher
+        const { school_id: teacherSchoolId } = await prisma.teacher.findUnique({
+            where: { teacher_id: parsedTeacherId },
+            select: { school_id: true }
+        });
 
-        for (const record of jsonObj) {
-            // Assume CSV columns match the Student model fields
-            const { stud_fname, stud_lname, stud_std, DOB, parent_contact } = record;
-
-            // Get teacher ID from the request (assumed to be stored in req.teacherId)
-            const parsedTeacherId = req.teacherId;
-
-            // Find the school ID associated with the teacher
-            const { school_id: teacherSchoolId } = await prisma.teacher.findUnique({
-                where: { teacher_id: parsedTeacherId },
-                select: { school_id: true }
-            });
-
-            if (!teacherSchoolId) {
-                return res.status(400).send("Teacher's school ID not found.");
-            }
-
-            const parsedSchoolId = parseInt(teacherSchoolId);
-
-            // Update or create the student record in the database
-            // await prisma.student.upsert({
-            //     where: {
-            //         stud_fname_stud_lname_stud_std_school_id: {
-            //             stud_fname,
-            //             stud_lname,
-            //             stud_std: parseInt(stud_std),
-            //             school_id: parsedSchoolId,
-            //         }
-            //     }, // Using a composite unique key
-            //     update: {
-            //         stud_fname,
-            //         stud_lname,
-            //         stud_std: parseInt(stud_std),
-            //         DOB: new Date(DOB),
-            //         parent_contact,
-            //         teacher_id: parsedTeacherId,
-            //         school_id: parsedSchoolId
-            //     },
-            //     create: {
-            //         stud_fname,
-            //         stud_lname,
-            //         stud_std: parseInt(stud_std),
-            //         DOB: new Date(DOB),
-            //         parent_contact,
-            //         teacher_id: parsedTeacherId,
-            //         school_id: parsedSchoolId
-            //     }
-            // });
+        if (!teacherSchoolId) {
+            return res.status(400).send("Teacher's school ID not found.");
         }
+
+        const parsedSchoolId = parseInt(teacherSchoolId);
+
+        const studentData = jsonObj.map(record => {
+            const { stud_fname, stud_lname, stud_std, DOB, parent_contact } = record;
+            return {
+                stud_fname,
+                stud_lname,
+                stud_std: parseInt(stud_std),
+                DOB: ConverttedDate(DOB),
+                parent_contact,
+                teacher_id: parsedTeacherId,
+                school_id: parsedSchoolId
+            };
+        });
+        console.log(studentData);
+
+        // Update or create the student records in the database
+        await prisma.student.createMany({
+            data: studentData
+        });
 
         // Send success response
         res.status(200).send("Students updated successfully.");
@@ -246,58 +213,39 @@ async function addmarks(req, res) {
     const csvFilePath = req.file.path;
 
     try {
-        // Convert CSV to JSON
-        const jsonObj = await csvtojson().fromFile(csvFilePath);
+        const jsonObj = await convertCSVtoJSON(csvFilePath);
 
-        const jsonFilePath = `./uploads/${path.parse(csvFilePath).name}.json`;
-        await fs.promises.writeFile(jsonFilePath, JSON.stringify(jsonObj, null, 2));
-        console.log("JSON file saved:", jsonFilePath);
+        const parsedTeacherId = req.teacherId;
 
-        for (const record of jsonObj) {
-            // Assume CSV columns match the Student model fields
-            const { stud_id, subject_id, marks_obtained, max_marks, term, year } = record;
+        const { school_id: teacherSchoolId } = await prisma.teacher.findUnique({
+            where: { teacher_id: parsedTeacherId },
+            select: { school_id: true }
+        });
 
-            // Get teacher ID from the request (assumed to be stored in req.teacherId)
-            const parsedTeacherId = req.teacherId;
+        if (!teacherSchoolId) {
+            return res.status(400).send("Teacher's school ID not found.");
+        }
 
-            // Find the school ID associated with the teacher
-            const { school_id: teacherSchoolId } = await prisma.teacher.findUnique({
-                where: { teacher_id: parsedTeacherId },
-                select: { school_id: true }
-            });
+        const parsedSchoolId = parseInt(teacherSchoolId);
+        console.log(jsonObj);
 
-            if (!teacherSchoolId) {
-                return res.status(400).send("Teacher's school ID not found.");
-            }
-
-            const parsedSchoolId = parseInt(teacherSchoolId);
-
-            // Update or create the student record in the database
-            await prisma.grades.upsert({
-                where: {
-                    stud_id_subject_id_term_year: {
-                        stud_id: parseInt(stud_id),
-                        subject_id: parseInt(subject_id),
-                        term: term,
-                        year: year
-                    }
-                }, // Using a composite unique key
-                update: {
-                    marks_obtained: parseInt(marks_obtained),
-                    max_marks: parseInt(max_marks)
-                },
-                create: {
-                    stud_id: parseInt(stud_id),
+        const gradesData = jsonObj
+            .filter(record => record.student_id.trim() !== "") // Filter out records with empty student_id
+            .map(record => {
+                const { student_id, subject_id, marks_obtained, max_marks, term, year } = record;
+                return {
+                    student_id: parseInt(student_id),
                     subject_id: parseInt(subject_id),
                     marks_obtained: parseInt(marks_obtained),
                     max_marks: parseInt(max_marks),
-                    term: term,
-                    year: year
-                }
+                    term,
+                    year: parseInt(year),
+                };
             });
-        }
+        await prisma.grades.createMany({
+            data: gradesData
+        });
 
-        // Send success response
         res.status(200).send("Marks added successfully.");
 
     } catch (error) {
@@ -306,8 +254,117 @@ async function addmarks(req, res) {
     }
 }
 
-async function showsAlltudents(req, res) {
-    res.send("All students");   
+async function getGradesForStudent(studentId) {
+    try {
+        const query = `
+            SELECT subject_id, marks_obtained, max_marks, year, term
+            FROM grades
+            WHERE student_id = ${studentId}`;
+
+        const grades = await prisma.$queryRawUnsafe(query); // Use $queryRawUnsafe for dynamic raw queries
+        // console.log(grades);
+
+        return grades.map(grade => ({
+            subjectId: grade.subject_id,
+            marksObtained: grade.marks_obtained,
+            maxMarks: grade.max_marks,
+            year: grade.year,
+            term: grade.term,
+        }));
+    } catch (error) {
+        console.error('Error fetching grades:', error);
+        throw new Error('Failed to fetch grades');
+    }
 }
 
-module.exports = { loginTeacher, getReport, addstudent, addmarks, showsAlltudents };
+async function showsAllStudents(req, res) {
+    try {
+        const teacherId = req.teacherId;
+
+        const teacher = await prisma.teacher.findUnique({
+            where: { teacher_id: teacherId },
+            include: {
+                students: true,
+            },
+        });
+
+        if (!teacher) {
+            return res.status(404).json({ error: 'Teacher not found' });
+        }
+
+        const students = await Promise.all(
+            teacher.students?.map(async student => {
+                // console.log(student.stud_id);
+
+                const grades = await getGradesForStudent(student.stud_id);
+                return {
+                    studentId: parseInt(student.stud_id),
+                    firstName: student.stud_fname,
+                    lastName: student.stud_lname,
+                    standard: parseInt(student.stud_std),
+                    dateOfBirth: new Date(student.DOB).toISOString(),
+                    parentContact: student.parent_contact,
+                    grades,
+                };
+            })
+        );
+
+        return res.json(students);
+    } catch (error) {
+        console.error('Error showing all students:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+
+async function addactivitymarks(req, res) {
+
+    console.log("In addactivitymarks function");
+
+    if (!req.file) {
+        return res.status(400).send("No files were uploaded.");
+    }
+    console.log("File uploaded:", req.file.filename);
+    const csvFilePath = req.file.path;
+
+    try {
+        const jsonObj = await convertCSVtoJSON(csvFilePath);
+
+        const parsedTeacherId = req.teacherId;
+
+        const { school_id: teacherSchoolId } = await prisma.teacher.findUnique({
+            where: { teacher_id: parsedTeacherId },
+            select: { school_id: true }
+        });
+
+        if (!teacherSchoolId) {
+            return res.status(400).send("Teacher's school ID not found.");
+        }
+
+        const parsedSchoolId = parseInt(teacherSchoolId);
+
+        const activitiesData = jsonObj
+            .filter(record => record.student_id.trim() !== "") // Filter out records with empty student_id
+            .map(record => {
+                const { student_id, activity_id, marks_obtained, total_marks, date, grade } = record;
+                return {
+                    student_id: parseInt(student_id),
+                    activity_id: parseInt(activity_id),
+                    marks_obtained: parseInt(marks_obtained),
+                    total_marks: parseInt(total_marks),
+                    grade: grade
+                };
+            });
+
+        await prisma.ActivityMarks.createMany({
+            data: activitiesData
+        });
+
+        res.status(200).send("Activity marks added successfully.");
+
+    } catch (error) {
+        console.error("Error processing CSV file:", error);
+        res.status(500).send("Error processing CSV file.");
+    }
+}
+
+module.exports = { getReport, addstudent, addmarks, showsAllStudents, addactivitymarks };

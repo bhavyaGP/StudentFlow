@@ -1,0 +1,57 @@
+[
+  {
+    "teacher_id": 1,
+    "username": "johndoe",
+    "teacher_fname": "John",
+    "teacher_lname": "Doe",
+    "allocated_standard": 5,
+    "teacher_email": "johndoe@example.com",
+    "school_id": 101,
+    "password": "password123",
+    "DOB": "1980-04-15"
+  },
+  {
+    "teacher_id": 2,
+    "username": "janesmith",
+    "teacher_fname": "Jane",
+    "teacher_lname": "Smith",
+    "allocated_standard": 8,
+    "teacher_email": "janesmith@example.com",
+    "school_id": 102,
+    "password": "password456",
+    "DOB": "1985-09-23"
+  },
+  {
+    "teacher_id": 3,
+    "username": "robertjohnson",
+    "teacher_fname": "Robert",
+    "teacher_lname": "Johnson",
+    "allocated_standard": 7,
+    "teacher_email": "robertjohnson@example.com",
+    "school_id": 103,
+    "password": "password789",
+    "DOB": "1978-11-30"
+  },
+  {
+    "teacher_id": 4,
+    "username": "emilybrown",
+    "teacher_fname": "Emily",
+    "teacher_lname": "Brown",
+    "allocated_standard": 10,
+    "teacher_email": "emilybrown@example.com",
+    "school_id": 104,
+    "password": "password101",
+    "DOB": "1990-06-12"
+  },
+  {
+    "teacher_id": 5,
+    "username": "michaelwhite",
+    "teacher_fname": "Michael",
+    "teacher_lname": "White",
+    "allocated_standard": 4,
+    "teacher_email": "michaelwhite@example.com",
+    "school_id": 105,
+    "password": "password202",
+    "DOB": "1975-02-05"
+  }
+]

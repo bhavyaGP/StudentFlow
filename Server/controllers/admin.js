@@ -2,6 +2,8 @@ const jwt = require('jsonwebtoken');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
+const { sendMail } = require('../services/mailer.js');
+
 
 // Function to create a new teacher
 async function registerTeacher(req, res) {
@@ -60,6 +62,14 @@ async function registerTeacher(req, res) {
             data: { username },
         });
 
+        // Send email to teacher
+        const emailData = {
+            to: teacher_email,
+            subject: 'Welcome to the School Management System',
+            text: `Welcome to the School Management System. Your username is ${username} and password is ${ddmmyyyyPassword}. Please login to the system to change your password.`,
+            html: `<p>Welcome to the School Management System. Your username is  ${username} and password is ${ddmmyyyyPassword} and your allocated standard is ${allocated_standard} for our school  website. </p>`,
+        };
+        sendMail(emailData);
         res.status(201).json(newTeacher);
     } catch (error) {
         console.error('Error creating teacher:', error);
