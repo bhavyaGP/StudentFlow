@@ -10,7 +10,11 @@ router.get('/', async (req, res) => {
         return res.redirect('/loggin');
     }
     const user = getUser(token);
-    console.log(user)
+    console.log(user);
+
+    if (!user) {
+        return res.redirect('/loggin');
+    }
 
     if (user.role === 'admin') {
         return res.redirect('/api/admin');

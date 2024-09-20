@@ -1,6 +1,6 @@
 const express = require('express');
 const multer = require('multer');
-const { HandleTeacherLogin, getReport, addstudent, addmarks, showsAllStudents, addactivitymarks } = require('../controllers/teacher.js');
+const { HandleTeacherLogin, getReport, addstudent, addmarks, showsAllStudents, addactivitymarks, teacherdashboarddata ,teachertabulardata,addachivement} = require('../controllers/teacher.js');
 const { authenticateTeacher } = require('../middleware/authteacher.js');
 const { route } = require('./static.js');
 const router = express.Router();
@@ -34,12 +34,14 @@ router.get("/activitymarks", authenticateTeacher, (req, res) => {
 
 
 // Protected routes
-router.get('/report', authenticateTeacher, getReport); // Requires authentication
+router.get('/report', authenticateTeacher, getReport); 
 router.post('/addstudent', authenticateTeacher, upload.single("excelFile"), addstudent);
 router.post('/uploadmarks', authenticateTeacher, upload.single("excelFile"), addmarks);
 router.get('/allstudent', authenticateTeacher, showsAllStudents)
 router.post('/activitymarks', authenticateTeacher, upload.single("excelFile"), addactivitymarks);
-
+router.get('/dashboarddata', authenticateTeacher, teacherdashboarddata);
+router.get('/tabulardata', authenticateTeacher, teachertabulardata);
+router.post('/addachivement',authenticateTeacher,addachivement);
 
 
 module.exports = router;
