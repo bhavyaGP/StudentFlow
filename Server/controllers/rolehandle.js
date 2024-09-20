@@ -25,8 +25,8 @@ async function handlebasiclogin(req, res) {
                 httpOnly: true,
                 maxAge: 4 * 60 * 60 * 1000 // Cookie expires in 4 hours
             });
-            // return res.json({ message: 'Login successful. You will be redirected to the teacher dashboard.', token });
-            return res.redirect('/api/teacher');
+            return res.json({ message: 'Login successful. You will be redirected to the teacher dashboard.', token });
+            // return res.redirect('/api/teacher');
         }
 
         // Check if the user is the admin with hardcoded credentials
@@ -39,8 +39,8 @@ async function handlebasiclogin(req, res) {
                 httpOnly: true,
                 maxAge: 4 * 60 * 60 * 1000 // Cookie expires in 4 hours
             });
-            // return res.json({ message: 'Login successful. You will be redirected to the admin dashboard.', token, admin });
-            return res.redirect('/api/admin');
+            return res.json({ message: 'Login successful. You will be redirected to the admin dashboard.', token, admin });
+            // return res.redirect('/api/admin');
         }
 
         // If no user was found
@@ -50,9 +50,5 @@ async function handlebasiclogin(req, res) {
         res.status(500).send('Internal server error');
     }
 }
-
-
-
-
 
 module.exports = { handlebasiclogin };
