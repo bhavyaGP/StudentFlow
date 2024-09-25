@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const { registerTeacher } = require('../controllers/admin.js');
+const { registerTeacher, dashboarddata, tabulardata ,declareResult} = require('../controllers/admin.js');
 const { restrictedtoadminonly } = require('../middleware/adminauth.js');
 const { route } = require('./static.js');
-// Public routes
-router.get('/', restrictedtoadminonly, (req, res) => {
-    res.send('Welcome to the admin homepage');
-});
+
+
+
+router.get('/', restrictedtoadminonly, dashboarddata)
+router.get('/tabulardata', restrictedtoadminonly, tabulardata);
 router.post('/addteacher', restrictedtoadminonly, registerTeacher);
-router.get('/',restrictedtoadminonly,)
+router.post('/declareresult', restrictedtoadminonly, declareResult);
 
 module.exports = router;

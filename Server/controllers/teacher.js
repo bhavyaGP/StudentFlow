@@ -14,7 +14,7 @@ async function getReport(req, res) {
     try {
         console.log("In getReport function");
 
-        const teacherid = req.teacherId; // Authenticated teacher's ID
+        const teacherid = req.teacherId || req.body.teacherId; // Authenticated teacher's ID
         const rollno = req.query.rollno; // Roll number from query parameters
         console.log(teacherid, rollno);
 
@@ -34,15 +34,14 @@ async function getReport(req, res) {
         if (!standard) {
             return res.status(404).json({ error: 'No standard found for the teacher' });
         }
-        console.log("Standard:", standard);
-
+        // console.log("Standard:", standard);
         // Find the student based on roll number and standard
         const student = await prisma.student.findFirst({
             where: {
                 rollno: parseInt(rollno),
-                stud_std: standard
             },
-            include: {
+            select: {
+                GRno: true,
                 monthlyAttendance: {
                     where: {
                         year: new Date().getFullYear()
@@ -68,7 +67,12 @@ async function getReport(req, res) {
                 school: true,
             }
         });
-
+        const studentachivement = await prisma.achievement.findMany({
+            where: {
+                GRno: student.GRno
+            }
+        });
+        
         if (!student) {
             return res.status(404).json({ error: 'Student not found' });
         }
@@ -112,6 +116,12 @@ async function getReport(req, res) {
                 activityName: act.activity.activity_name,
                 marksObtained: act.marks_obtained,
                 totalMarks: act.total_marks
+            })),
+            achievements: studentachivement.map(ach => ({
+                GRno: ach.GRno,
+                achievementTitle: ach.achievement_title,
+                date: ach.date,
+                student_std: ach.student_std
             }))
         };
 
@@ -339,7 +349,7 @@ async function getGradesForStudent(rollno) {
 
 async function showsAllStudents(req, res) {
     try {
-        const teacherId = req.teacherId;
+        const teacherId = req.teacherId || req.body.teacherId;
 
         const teacher = await prisma.teacher.findUnique({
             where: { teacher_id: teacherId },
@@ -429,7 +439,7 @@ async function addactivitymarks(req, res) {
 
 async function teacherdashboarddata(req, res) {
     try {
-        const teacherid = req.teacherId;
+        const teacherid = req.teacherId || req.body.teacherId;
         const teacher = await prisma.teacher.findUnique({
             where: { teacher_id: teacherid },
             select: { school_id: true, allocated_standard: true }
@@ -557,7 +567,7 @@ async function teacherdashboarddata(req, res) {
 
 async function teachertabulardata(req, res) {
     try {
-        const teacherid = req.teacherId;
+        const teacherid = req.teacherId || req.body.teacherId;
         const teacher = await prisma.teacher.findUnique({
             where: { teacher_id: teacherid },
             select: { school_id: true, allocated_standard: true }
@@ -658,6 +668,50 @@ async function addachivement(req, res) {
     return res.status(200).json({ message: 'Achievement added successfully' });
 }
 
+async function updatemarks(req, res) {
 
-module.exports = { getReport, addstudent, addmarks, showsAllStudents, addactivitymarks, teacherdashboarddata, teachertabulardata, addachivement };
+    const teacherId = req.teacherId;
+    const { rollno, subject_id, marks_obtained } = req.body;
+    const teacher = await prisma.teacher.findUnique({
+        where: { teacher_id: teacherId },
+        select: { school_id: true, allocated_standard: true }
+    });
+    const standard = teacher.allocated_standard;
+    const student = await prisma.student.findFirst({
+        where: {
+            rollno: parseInt(rollno),
+        }
+    });
+
+    if (!student) {
+        return res.status(404).json({ error: 'Student not found' });
+    }
+    const subjects = ['ENG301', 'GUJ101', 'MATH101', 'SCI201', 'SS401'];
+    const grade = await prisma.grades.findFirst({
+        where: {
+            rollno: parseInt(rollno),
+            subject_id: subject_id,
+            year: new Date().getFullYear()
+        }
+    });
+
+    if (!grade) {
+        return res.status(404).json({ error: 'Grade not found' });
+    }
+
+    await prisma.grades.update({
+        where: {
+            grade_id: grade.grade_id
+        },
+        data: {
+            marks_obtained: marks_obtained
+        }
+    });
+
+    return res.status(200).json({ message: 'Marks updated successfully' });
+
+
+}
+
+module.exports = { getReport, addstudent, addmarks, showsAllStudents, addactivitymarks, teacherdashboarddata, teachertabulardata, addachivement, updatemarks };
 //                     Done      Done      //vasu             Done        //dummy data        Done               Done               Done

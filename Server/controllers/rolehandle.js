@@ -3,11 +3,12 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const { setTeacher, setAdmin } = require('../services/auth.js');
 
-async function handlebasiclogin(req, res) {
+async function 
+handlebasiclogin(req, res) {
     const { username, password } = req.body;
     console.log(username, password);
     try {
-        let token;
+        let token;4
         let user;
 
         // Use findFirst to search by both username and password
@@ -25,7 +26,7 @@ async function handlebasiclogin(req, res) {
                 httpOnly: true,
                 maxAge: 4 * 60 * 60 * 1000 // Cookie expires in 4 hours
             });
-            return res.json({ message: 'Login successful. You will be redirected to the teacher dashboard.', token });
+            return res.json({ message: 'Login successful. You will be redirected to the teacher dashboard.', token, user });
             // return res.redirect('/api/teacher');
         }
 

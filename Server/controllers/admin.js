@@ -3,6 +3,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 const { sendMail } = require('../services/mailer.js');
+const { setResultStatus } = require('../controllers/manageresult.js');
 
 
 // Function to create a new teacher
@@ -83,4 +84,161 @@ function convertToISODate(dateString) {
     return new Date(isoDateString);
 }
 
-module.exports = { registerTeacher };
+
+async function dashboarddata(req, res) {
+    try {
+        const graph1 = await prisma.$queryRaw`
+            SELECT 
+            s.stud_std AS "std",
+            SUM(CASE WHEN g.marks_obtained >= 40 THEN 1 ELSE 0 END) AS "pass",
+            SUM(CASE WHEN g.marks_obtained < 40 THEN 1 ELSE 0 END) AS "fail"
+            FROM 
+                student s
+            JOIN 
+                grades g ON s.rollno = g.rollno
+            GROUP BY 
+                s.stud_std;
+            `;
+
+        const graph2 = await prisma.$queryRaw`
+            SELECT 
+            s.stud_std AS "std",
+            COUNT(DISTINCT s.rollno) AS "no_of_students"
+            FROM 
+                student s
+            JOIN 
+                grades g ON s.rollno = g.rollno
+            GROUP BY 
+                s.stud_std
+            HAVING 
+                    AVG(g.marks_obtained) >= 81;
+            `;
+        const graph3 = await prisma.$queryRaw`
+            SELECT
+                 s.stud_std AS "std",
+            COUNT(DISTINCT s.rollno) AS "no_of_students"
+            FROM 
+                student s
+            JOIN 
+                grades g ON s.rollno = g.rollno
+            GROUP BY 
+                s.stud_std
+            HAVING 
+                AVG(g.marks_obtained) < 50;
+            `;
+
+        const graph4 = await prisma.$queryRaw` 
+            
+            SELECT 
+            s.stud_std AS "std",
+            COUNT(DISTINCT s.rollno) AS "no_of_students"
+            FROM 
+                student s
+            JOIN 
+                grades g ON s.rollno = g.rollno
+            GROUP BY 
+                s.stud_std
+            HAVING 
+                AVG(g.marks_obtained) BETWEEN 51 AND 80;
+            `;
+
+        // Convert BigInt values to strings
+        const convertBigIntToString = (data) => {
+            return data.map(row => {
+                const newRow = {};
+                for (const key in row) {
+                    newRow[key] = typeof row[key] === 'bigint' ? row[key].toString() : row[key];
+                }
+                return newRow;
+            });
+        };
+
+        res.status(200).json({
+            graph1: convertBigIntToString(graph1),
+            graph2: convertBigIntToString(graph2),
+            graph3: convertBigIntToString(graph3),
+            graph4: convertBigIntToString(graph4)
+        });
+    } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+        res.status(500).json({ error: 'Failed to fetch dashboard data', details: error.message });
+    }
+}
+
+async function tabulardata(req, res) {
+    try {
+        const table1 = await prisma.$queryRaw` SELECT 
+            s.rollno AS "stuID",
+            CONCAT(s.stud_fname, ' ', s.stud_lname) AS "student name",
+            s.stud_std AS "Standard",
+            AVG(g.marks_obtained) AS "% of student in Academic"
+        FROM 
+            student s
+        JOIN 
+            grades g ON s.rollno = g.rollno
+        GROUP BY 
+            s.rollno, s.stud_fname, s.stud_lname, s.stud_std
+        HAVING 
+            AVG(g.marks_obtained) = (
+                SELECT 
+                    MAX(avg_marks)
+                FROM (
+                    SELECT 
+                        student.stud_std,
+                        AVG(marks_obtained) AS avg_marks
+                    FROM 
+                        grades
+                    JOIN 
+                        student ON grades.rollno = student.rollno
+                    GROUP BY 
+                        student.stud_std, student.rollno
+                ) AS subquery
+                WHERE 
+                    subquery.stud_std = s.stud_std
+            );
+        `;
+        const table2 = await prisma.$queryRaw` SELECT 
+            s.rollno AS "stuID",
+            CONCAT(s.stud_fname, ' ', s.stud_lname) AS "student name",
+            s.stud_std AS "Standard"
+        FROM 
+            student s
+        JOIN 
+            grades g ON s.rollno = g.rollno
+        GROUP BY 
+            s.rollno, s.stud_std
+        HAVING 
+            AVG(g.marks_obtained) < 40;
+        `;
+        const table3 = await prisma.$queryRaw` SELECT 
+            s.rollno AS "student Id",
+            CONCAT(s.stud_fname, ' ', s.stud_lname) AS "student name",
+            s.stud_std AS "Standard",
+            a.achievement_title AS "Achievement title",
+            a.date AS "Date"
+        FROM 
+            student s
+        JOIN 
+            achievement a ON s.rollno = a.GRno;  -- Assuming GRno is the foreign key in achievement
+                `;
+
+        res.status(200).json({
+            table1,
+            table2,
+            table3
+        });
+
+    }
+    catch (error) {
+        console.error('Error fetching tabular data:', error);
+        res.status(500).json({ error: 'Failed to fetch tabular data', details: error.message });
+    }
+}
+
+async function declareResult(req, res) {
+    const { isResultOut } = req.body;
+    setResultStatus(isResultOut);
+    res.status(200).json({ message: `Result status set to ${isResultOut}` });
+}
+
+module.exports = { registerTeacher, dashboarddata, tabulardata, declareResult };

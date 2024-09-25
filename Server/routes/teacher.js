@@ -1,7 +1,10 @@
 const express = require('express');
 const multer = require('multer');
-const { HandleTeacherLogin, getReport, addstudent, addmarks, showsAllStudents, addactivitymarks, teacherdashboarddata ,teachertabulardata,addachivement} = require('../controllers/teacher.js');
+const { HandleTeacherLogin, getReport, addstudent, addmarks, showsAllStudents, addactivitymarks, teacherdashboarddata, teachertabulardata, addachivement, updatemarks } = require('../controllers/teacher.js');
 const { authenticateTeacher } = require('../middleware/authteacher.js');
+const { restrictedtoadminonly } = require('../middleware/adminauth.js');
+const { authenticateTeacherOrAdmin } = require('../middleware/adminorteacher.js');
+const checkResultDeclared = require('../middleware/checkResultDeclared.js')
 const { route } = require('./static.js');
 const router = express.Router();
 const upload = multer({ dest: 'uploads/' });
@@ -34,14 +37,15 @@ router.get("/activitymarks", authenticateTeacher, (req, res) => {
 
 
 // Protected routes
-router.get('/report', authenticateTeacher, getReport); 
+router.get('/report', authenticateTeacher, checkResultDeclared, getReport);
 router.post('/addstudent', authenticateTeacher, upload.single("excelFile"), addstudent);
 router.post('/uploadmarks', authenticateTeacher, upload.single("excelFile"), addmarks);
-router.get('/allstudent', authenticateTeacher, showsAllStudents)
+router.get('/allstudent', authenticateTeacher, showsAllStudents);
 router.post('/activitymarks', authenticateTeacher, upload.single("excelFile"), addactivitymarks);
 router.get('/dashboarddata', authenticateTeacher, teacherdashboarddata);
-router.get('/tabulardata', authenticateTeacher, teachertabulardata);
-router.post('/addachivement',authenticateTeacher,addachivement);
+router.get('/tabulardata', authenticateTeacher, checkResultDeclared, teachertabulardata);
+router.post('/addachivement', authenticateTeacher, addachivement);
+router.post('/updatemarks', authenticateTeacher, updatemarks);
 
 
 module.exports = router;
