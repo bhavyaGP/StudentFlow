@@ -68,7 +68,7 @@ async function registerTeacher(req, res) {
             to: teacher_email,
             subject: 'Welcome to the School Management System',
             text: `Welcome to the School Management System. Your username is ${username} and password is ${ddmmyyyyPassword}. Please login to the system to change your password.`,
-            html: `<p>Welcome to the School Management System. Your username is  ${username} and password is ${ddmmyyyyPassword} and your allocated standard is ${allocated_standard} for our school  website. </p>`,
+            // html: `<p>Welcome to the School Management System. Your username is  ${username} and password is ${ddmmyyyyPassword} and your allocated standard is ${allocated_standard} for our school  website. </p>`,
         };
         sendMail(emailData);
         res.status(201).json(newTeacher);
