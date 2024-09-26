@@ -130,6 +130,7 @@ model Teacher {
 
 model SchoolSchema {
   school_id    Int      @id @default(autoincrement())
+  password    String    
   school_name  String
   school_dist  String
   school_add   String
