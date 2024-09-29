@@ -72,7 +72,7 @@ async function getReport(req, res) {
                 GRno: student.GRno
             }
         });
-        
+
         if (!student) {
             return res.status(404).json({ error: 'Student not found' });
         }
@@ -239,7 +239,6 @@ async function addstudent(req, res) {
             });
         }
 
-        // Send success response
         res.status(200).send("Students updated successfully.");
     } catch (error) {
         console.error("Error processing CSV file:", error);
@@ -302,7 +301,6 @@ async function addmarks(req, res) {
                         }
                     });
                 } else {
-                    // Create a new record
                     await prisma.grades.create({
                         data: {
                             rollno: rollno,
@@ -332,7 +330,7 @@ async function getGradesForStudent(rollno) {
             FROM grades
             WHERE rollno = ${rollno}`;
 
-        const grades = await prisma.$queryRawUnsafe(query); // Use $queryRawUnsafe for dynamic raw queries
+        const grades = await prisma.$queryRawUnsafe(query);
         // console.log(grades);
 
         return grades.map(grade => ({
@@ -374,6 +372,8 @@ async function showsAllStudents(req, res) {
                     standard: parseInt(student.stud_std),
                     dateOfBirth: new Date(student.DOB).toISOString(),
                     parentContact: student.parent_contact,
+                    parentName: student.parentname,
+                    studentAddress: student.student_add,
                     grades,
                 };
             })
@@ -387,48 +387,83 @@ async function showsAllStudents(req, res) {
 }
 
 async function addactivitymarks(req, res) {
-
     console.log("In addactivitymarks function");
 
     if (!req.file) {
         return res.status(400).send("No files were uploaded.");
     }
+
     console.log("File uploaded:", req.file.filename);
     const csvFilePath = req.file.path;
 
     try {
         const jsonObj = await convertCSVtoJSON(csvFilePath);
 
+        if (!jsonObj || jsonObj.length === 0) {
+            return res.status(400).send("CSV file is empty or couldn't be parsed.");
+        }
+
         const parsedTeacherId = req.teacherId;
 
-        const { school_id: teacherSchoolId } = await prisma.teacher.findUnique({
+        const teacher = await prisma.teacher.findUnique({
             where: { teacher_id: parsedTeacherId },
             select: { school_id: true }
         });
 
-        if (!teacherSchoolId) {
+        if (!teacher || !teacher.school_id) {
             return res.status(400).send("Teacher's school ID not found.");
         }
 
-        const parsedSchoolId = parseInt(teacherSchoolId);
+        const parsedSchoolId = parseInt(teacher.school_id);
+        const activities = ["ART04", "INDOOR02", "OUTDOOR03", "PROJECT05", "STAGE01"];
+        const max_marks = 50;
 
-        const activitiesData = jsonObj
-            .filter(record => record.student_id.trim() !== "") // Filter out records with empty student_id
-            .map(record => {
-                const { student_id, activity_id, marks_obtained, total_marks, date, grade } = record;
-                return {
-                    student_id: parseInt(student_id),
-                    activity_id: parseInt(activity_id),
-                    marks_obtained: parseInt(marks_obtained),
-                    total_marks: parseInt(total_marks),
-                    grade: grade
-                };
-            });
+        const promises = [];
 
-        await prisma.ActivityMarks.createMany({
-            data: activitiesData
-        });
+        for (const student of jsonObj) {
+            const rollno = parseInt(student.rollno);
 
+            if (!rollno || isNaN(rollno)) {
+                console.error(`Invalid roll number for student: ${JSON.stringify(student)}`);
+                continue;
+            }
+
+            for (const activity of activities) {
+                const marks_obtained = parseInt(student[activity]) || 0;
+
+                promises.push(
+                    prisma.activityMarks.findFirst({
+                        where: {
+                            rollno: rollno,
+                            activity_id: activity,
+                        }
+                    }).then(existingRecord => {
+                        if (existingRecord) {
+                            // Update existing record with new marks
+                            return prisma.activityMarks.update({
+                                where: {
+                                    activitymarks_id: existingRecord.activitymarks_id
+                                },
+                                data: {
+                                    marks_obtained: marks_obtained
+                                }
+                            });
+                        } else {
+                            return prisma.activityMarks.create({
+                                data: {
+                                    rollno: rollno,
+                                    activity_id: activity,
+                                    marks_obtained: marks_obtained || 0,
+                                    total_marks: max_marks,
+                                }
+                            });
+                        }
+                    })
+                );
+            }
+        }
+
+        await Promise.all(promises);
         res.status(200).send("Activity marks added successfully.");
 
     } catch (error) {
@@ -436,6 +471,7 @@ async function addactivitymarks(req, res) {
         res.status(500).send("Error processing CSV file.");
     }
 }
+
 
 async function teacherdashboarddata(req, res) {
     try {
