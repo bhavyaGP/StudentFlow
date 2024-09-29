@@ -1,5 +1,5 @@
 const express = require('express');
-const   router = express.Router();
+const router = express.Router();
 const { handlebasiclogin } = require('../controllers/rolehandle');
 const { getUser } = require('../services/auth.js');
 
@@ -23,6 +23,10 @@ router.get('/', async (req, res) => {
         return res.redirect('/api/teacher');
     }
 });
+
+// router.get("/login", (req, res) => {
+//     res.render("login");
+// })
 
 router.post('/login', handlebasiclogin);
 

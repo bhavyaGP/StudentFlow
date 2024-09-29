@@ -8,7 +8,7 @@ function authenticateTeacher(req, res, next) {
         console.log('Token:', token);
 
         if (!token) {
-            return res.redirect('/login');
+            return res.status(401).json({ error: 'Unauthorized: No token provided' });
         }
 
     
