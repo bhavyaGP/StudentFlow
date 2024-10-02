@@ -241,4 +241,30 @@ async function declareResult(req, res) {
     res.status(200).json({ message: `Result status set to ${isResultOut}` });
 }
 
-module.exports = { registerTeacher, dashboarddata, tabulardata, declareResult };
+async function teacherdata(req, res) {
+
+    const adminID = req.adminID;
+    try {
+        const teachers = await prisma.teacher.findMany({
+            select: {
+                teacher_id: true,
+                teacher_fname: true,
+                teacher_lname: true,
+                allocated_standard: true,
+                teacher_email: true,
+                school_id: true,
+                DOB: true,
+                username: true
+            },
+            where: {
+                school_id: adminID
+            }
+        });
+        res.status(200).json(teachers);
+    } catch (error) {
+        console.error('Error fetching teachers:', error);
+        res.status(500).json({ error: 'Failed to fetch teachers', details: error.message });
+    }
+}
+
+module.exports = { registerTeacher, dashboarddata, tabulardata, declareResult, teacherdata };
