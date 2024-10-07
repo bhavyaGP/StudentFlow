@@ -7,9 +7,6 @@ const fs = require('fs');
 const path = require('path');
 
 
-
-
-
 async function getReport(req, res) {
     try {
         console.log("In getReport function");
