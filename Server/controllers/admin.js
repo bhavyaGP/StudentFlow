@@ -64,13 +64,7 @@ async function registerTeacher(req, res) {
         });
 
         // Send email to teacher
-        const emailData = {
-            to: teacher_email,
-            subject: 'Welcome to the School Management System',
-            text: `Welcome to the School Management System. Your username is ${username} and password is ${ddmmyyyyPassword}. Please login to the system to change your password.`,
-            // html: `<p>Welcome to the School Management System. Your username is  ${username} and password is ${ddmmyyyyPassword} and your allocated standard is ${allocated_standard} for our school  website. </p>`,
-        };
-        sendMail(emailData);
+        sendMail({to:teacher_email,teacher_fname,username,password:ddmmyyyyPassword});
         res.status(201).json(newTeacher);
     } catch (error) {
         console.error('Error creating teacher:', error);
@@ -237,7 +231,7 @@ async function tabulardata(req, res) {
 
 async function declareResult(req, res) {
     const { isResultOut } = req.body;
-    setResultStatus(isResultOut);
+    setResultStatus(isResultOut,req.adminID);
     res.status(200).json({ message: `Result status set to ${isResultOut}` });
 }
 

@@ -136,4 +136,5 @@ model SchoolSchema {
   school_add   String
   students     Student[]
   teachers     Teacher[]
+  resultout    Boolean   @default(false)
 }

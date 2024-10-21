@@ -1,42 +1,90 @@
-const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail');
 require('dotenv').config();
 
-async function sendMail({ to, subject, text }) {
-    try {
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: process.env.EMAIL_USERNAME,
-                pass: process.env.EMAIL_PASSWORD
-            }
-        });
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-        const html = `
-            <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-            <h2 style="color: #4CAF50;">Welcome to Our Community!</h2>
-            <p>Dear ${to},</p>
-            <p>We are thrilled to have you join us. Here are some details to get you started:</p>
-            <ul>
-                <li><strong>Message:</strong> ${text}</li>
-            </ul>
-            <p>Feel free to reach out if you have any questions.</p>
-            <p>Best regards,</p>
-            <p>Bhavya Prajapati</p>
-            </div>
+async function sendMail({ to , teacherName, username, password }) {
+    try {
+        const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Registration Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+        }
+        h1 {
+            color: #4CAF50;
+            margin-top: 0;
+        }
+        .credentials {
+            background-color: #e8f5e9;
+            border: 1px solid #a5d6a7;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Our Teaching Platform!</h1>
+        <p>Dear ${teacherName},</p>
+        <p>Congratulations! You have been successfully registered as a teacher on our platform. We're excited to have you join our community of educators.</p>
+        
+        <div class="credentials">
+            <p><strong>Your account details:</strong></p>
+            <p>Username: ${username}</p>
+            <p>Password: ${password}</p>
+        </div>
+        
+        <p>Please log in to your account and change your password as soon as possible for security reasons.</p>
+        
+        <p>If you have any questions or need assistance, please don't hesitate to contact our support team.</p>
+        
+        <p>We look forward to your valuable contributions!</p>
+        
+        <p>Best regards,<br>The Education Team</p>
+        
+        <div class="footer">
+            <p>This is an automated message. Please do not reply to this email.</p>
+        </div>
+    </div>
+</body>
+</html> 
         `;
 
-        const info = await transporter.sendMail({
+        const msg = {
+            to: to, 
             from: {
                 name: "Bhavya Prajapati",
-                address: process.env.EMAIL_USERNAME
+                email: process.env.EMAIL_USERNAME, // Sender email
             },
-            to: to,
-            subject: subject,
-            text: text,
+            subject: 'Welcome to Our Teaching Platform!',
+            text: 'Welcome to Our Teaching Platform!',
             html: html
-        });
-
-        // console.log('Email sent: ' + info.response);
+        };  
+        await sgMail.send(msg);
+        console.log('Email sent successfully');
+        
         return { message: 'Email sent successfully' };
     } catch (error) {
         console.error('Error sending email:', error);

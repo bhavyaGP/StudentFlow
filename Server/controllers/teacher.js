@@ -11,15 +11,15 @@ async function getReport(req, res) {
     try {
         console.log("In getReport function");
 
-        const teacherid = req.teacherId || req.body.teacherId; // Authenticated teacher's ID
-        const rollno = req.query.rollno; // Roll number from query parameters
-        console.log(teacherid, rollno);
+        const teacherId = req.teacherId || req.body.teacherId;
+        const rollno = req.query.rollno;
+        console.log(teacherId, rollno);
 
         // Find the teacher and their assigned standard
         const teacher = await prisma.teacher.findUnique({
-            where: { teacher_id: teacherid },
+            where: { teacher_id: teacherId },
             include: {
-                students: true // Assumes the Teacher model has a relation to Student model
+                students: true
             }
         });
 
@@ -27,73 +27,79 @@ async function getReport(req, res) {
             return res.status(404).json({ error: 'Teacher not found' });
         }
 
-        const standard = teacher.students[0]?.stud_std; // Assumes teacher is assigned to one standard
+        const standard = teacher.students[0]?.stud_std;
         if (!standard) {
             return res.status(404).json({ error: 'No standard found for the teacher' });
         }
-        // console.log("Standard:", standard);
-        // Find the student based on roll number and standard
+
+        const allActivities = await prisma.activity.findMany();
+        
+        // Create a mapping of activity_id to activity_name
+        const activityMap = Object.fromEntries(
+            allActivities.map(act => [act.activity_id.trim(), act.activity_name])
+        );
+
         const student = await prisma.student.findFirst({
             where: {
                 rollno: parseInt(rollno),
             },
-            select: {
-                GRno: true,
+            include: {
+                teacher: true,
+                school: true,
                 monthlyAttendance: {
                     where: {
-                        year: new Date().getFullYear()
-                    }
+                        year: new Date().getFullYear(),
+                    },
                 },
                 grades: {
                     where: { year: new Date().getFullYear() },
-                    include: { subject: true }
+                    include: { subject: true },
                 },
                 learning_outcomes: {
                     where: {
                         date: {
                             gte: new Date(`${new Date().getFullYear()}-01-01`),
-                            lte: new Date(`${new Date().getFullYear()}-12-31`)
-                        }
+                            lte: new Date(`${new Date().getFullYear()}-12-31`),
+                        },
                     },
-                    include: { subject: true }
+                    include: { subject: true },
                 },
-                activities: {
-                    include: { activity: true }
-                },
-                teacher: true,
-                school: true,
-            }
-        });
-        const studentachivement = await prisma.achievement.findMany({
-            where: {
-                GRno: student.GRno
-            }
+                activities: true,
+                achievements: true,
+            },
         });
 
         if (!student) {
             return res.status(404).json({ error: 'Student not found' });
         }
 
-        // Structure the report data
         const report = {
             studentDetails: {
+                GRno: student.GRno,
+                rollno: student.rollno,
                 firstName: student.stud_fname,
                 lastName: student.stud_lname,
                 standard: student.stud_std,
                 dateOfBirth: student.DOB,
                 parentContact: student.parent_contact,
+                parentName: student.parentname,
+                address: student.student_add,
                 teacher: {
-                    teacherId: student.teacher_id,
-                    name: `${student.teacher.teacher_fname} ${student.teacher.teacher_lname}`
+                    teacherId: student.teacher.teacher_id,
+                    name: `${student.teacher.teacher_fname} ${student.teacher.teacher_lname}`,
+                    email: student.teacher.teacher_email,
+                    allocatedStandard: student.teacher.allocated_standard
                 },
                 school: {
-                    schoolId: student.school_id,
+                    schoolId: student.school.school_id,
                     name: student.school.school_name,
+                    district: student.school.school_dist,
                     address: student.school.school_add
                 }
             },
             attendance: student.monthlyAttendance.map(a => ({
                 month: a.month,
+                year: a.year,
                 totalPresentDays: a.total_present_days,
                 totalAbsentDays: a.total_absent_days,
                 totalLateDays: a.total_late_days
@@ -101,7 +107,8 @@ async function getReport(req, res) {
             grades: student.grades.map(g => ({
                 subject: g.subject.subject_name,
                 marksObtained: g.marks_obtained,
-                maxMarks: g.max_marks
+                maxMarks: g.max_marks,
+                year: g.year
             })),
             learningOutcomes: student.learning_outcomes.map(lo => ({
                 subject: lo.subject.subject_name,
@@ -110,19 +117,19 @@ async function getReport(req, res) {
                 date: lo.date
             })),
             activities: student.activities.map(act => ({
-                activityName: act.activity.activity_name,
-                marksObtained: act.marks_obtained,
-                totalMarks: act.total_marks
+                activityId: act.activity_id.trim(),
+                activityName: activityMap[act.activity_id.trim()] || 'Unknown Activity',
+                marksObtained: parseFloat(act.marks_obtained),
+                totalMarks: parseFloat(act.total_marks)
             })),
-            achievements: studentachivement.map(ach => ({
-                GRno: ach.GRno,
-                achievementTitle: ach.achievement_title,
+            achievements: student.achievements.map(ach => ({
+                title: ach.achievement_title,
                 date: ach.date,
-                student_std: ach.student_std
+                standard: ach.student_std
             }))
         };
 
-        console.log("Report generated");
+        console.log("Comprehensive report generated");
         return res.json(report);
 
     } catch (error) {
@@ -371,7 +378,6 @@ async function showsAllStudents(req, res) {
                     parentContact: student.parent_contact,
                     parentName: student.parentname,
                     studentAddress: student.student_add,
-                    grades,
                 };
             })
         );
