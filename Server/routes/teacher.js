@@ -42,8 +42,8 @@ router.post('/addstudent', authenticateTeacher, upload.single("excelFile"), adds
 router.post('/uploadmarks', authenticateTeacher, upload.single("excelFile"), addmarks);
 router.get('/allstudent', authenticateTeacher, showsAllStudents);
 router.post('/activitymarks', authenticateTeacher, upload.single("excelFile"), addactivitymarks);
-router.get('/dashboarddata', authenticateTeacher, teacherdashboarddata);
-router.get('/tabulardata', authenticateTeacher, checkResultDeclared, teachertabulardata);
+router.get('/dashboarddata', authenticateTeacherOrAdmin, teacherdashboarddata);
+router.get('/tabulardata', authenticateTeacherOrAdmin, teachertabulardata);
 router.post('/addachivement', authenticateTeacher, addachivement);
 router.post('/updatemarks', authenticateTeacher, updatemarks);
 

@@ -33,7 +33,7 @@ async function getReport(req, res) {
         }
 
         const allActivities = await prisma.activity.findMany();
-        
+
         // Create a mapping of activity_id to activity_name
         const activityMap = Object.fromEntries(
             allActivities.map(act => [act.activity_id.trim(), act.activity_name])
@@ -478,6 +478,10 @@ async function addactivitymarks(req, res) {
 
 async function teacherdashboarddata(req, res) {
     try {
+        console.log("in teacherdashboarddata function");
+        
+        console.log(req.body.teacherId);
+        
         const teacherid = req.teacherId || req.body.teacherId;
         const teacher = await prisma.teacher.findUnique({
             where: { teacher_id: teacherid },
