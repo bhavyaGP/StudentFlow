@@ -479,9 +479,9 @@ async function addactivitymarks(req, res) {
 async function teacherdashboarddata(req, res) {
     try {
         console.log("in teacherdashboarddata function");
-        
+
         console.log(req.body.teacherId);
-        
+
         const teacherid = req.teacherId || req.body.teacherId;
         const teacher = await prisma.teacher.findUnique({
             where: { teacher_id: teacherid },
@@ -756,5 +756,18 @@ async function updatemarks(req, res) {
 
 }
 
-module.exports = { getReport, addstudent, addmarks, showsAllStudents, addactivitymarks, teacherdashboarddata, teachertabulardata, addachivement, updatemarks };
+async function allachivement(req, res) {
+    try {
+
+        const achivement = await prisma.achievement.findMany();
+        return res.json(achivement);
+
+    }
+    catch (error) {
+        console.error('Error fetching all achivement:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+
+module.exports = { getReport, addstudent, addmarks, showsAllStudents, addactivitymarks, teacherdashboarddata, teachertabulardata, addachivement, updatemarks, allachivement };
 //                     Done      Done      //vasu             Done        //dummy data        Done               Done               Done

@@ -1,6 +1,6 @@
 const express = require('express');
 const multer = require('multer');
-const { HandleTeacherLogin, getReport, addstudent, addmarks, showsAllStudents, addactivitymarks, teacherdashboarddata, teachertabulardata, addachivement, updatemarks } = require('../controllers/teacher.js');
+const { HandleTeacherLogin, getReport, addstudent, addmarks, showsAllStudents, addactivitymarks, teacherdashboarddata, teachertabulardata, addachivement, updatemarks ,allachivement} = require('../controllers/teacher.js');
 const { authenticateTeacher } = require('../middleware/authteacher.js');
 const { restrictedtoadminonly } = require('../middleware/adminauth.js');
 const { authenticateTeacherOrAdmin } = require('../middleware/adminorteacher.js');
@@ -46,6 +46,6 @@ router.get('/dashboarddata', authenticateTeacherOrAdmin, teacherdashboarddata);
 router.get('/tabulardata', authenticateTeacherOrAdmin, teachertabulardata);
 router.post('/addachivement', authenticateTeacher, addachivement);
 router.post('/updatemarks', authenticateTeacher, updatemarks);
-
+router.get('/allachivement', authenticateTeacherOrAdmin, allachivement);
 
 module.exports = router;
