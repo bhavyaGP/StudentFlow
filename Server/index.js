@@ -1,5 +1,5 @@
 const express = require('express');
-const cors=require('cors')
+const cors = require('cors')
 const app = express();
 const PORT = process.env.PORT || 3000;
 require('dotenv').config();
@@ -28,11 +28,14 @@ const teacherRoutes = require('./routes/teacher.js');
 const adminRoutes = require('./routes/admin.js');
 
 // Use the defined routes
-app.use("/",staticroutes);
+app.use("/", staticroutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/teacher', teacherRoutes);
 
-// Start the server
+app.get('/', (req, res) => {
+    res.send('Cat');
+});
+
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });

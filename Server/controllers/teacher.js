@@ -172,10 +172,8 @@ async function addstudent(req, res) {
     try {
         const jsonObj = await convertCSVtoJSON(csvFilePath);
 
-        // Get teacher ID from the request (assumed to be stored in req.teacherId)
         const parsedTeacherId = req.teacherId;
 
-        // Find the school ID and standard associated with the teacher
         const { school_id: parsedSchoolId, allocated_standard: teacherStandard } = await prisma.teacher.findUnique({
             where: { teacher_id: parsedTeacherId },
             select: { school_id: true, allocated_standard: true }
@@ -185,21 +183,18 @@ async function addstudent(req, res) {
             return res.status(400).send("Teacher's school ID or allocated standard not found.");
         }
 
-        // Get the last roll number for the teacher's allocated standard
         const lastStudent = await prisma.student.findFirst({
             where: {
-                stud_std: parseInt(teacherStandard), // Ensure the student belongs to the teacher's standard
-                school_id: parsedSchoolId // Ensure the student belongs to the teacher's school
+                stud_std: parseInt(teacherStandard),
+                school_id: parsedSchoolId
             },
             orderBy: {
                 rollno: 'desc'
             }
         });
 
-        // Set base roll number, e.g., 09001 if no students found
         const lastRollNo = lastStudent ? parseInt(lastStudent.rollno.toString().slice(2)) : 0;
 
-        // Filter and map student data
         const studentData = jsonObj
             .filter(record => {
                 const { stud_fname, stud_lname, stud_std, DOB, parent_contact, parentname, student_add } = record;
@@ -213,21 +208,21 @@ async function addstudent(req, res) {
 
                 let newrollno;
 
-                // Generate roll number based on the teacher's allocated standard
                 if (parseInt(stud_std) === parseInt(teacherStandard)) {
                     const nextRollNo = lastRollNo + index + 1;
-                    newrollno = `${teacherStandard}${nextRollNo.toString().padStart(3, '0')}`; // e.g., '09001'
+                    newrollno = `${teacherStandard}${nextRollNo.toString().padStart(3, '0')}`;
                 } else {
-                    // Handle if the student's standard doesn't match the teacher's standard
                     throw new Error(`Student standard ${stud_std} does not match the teacher's allocated standard ${teacherStandard}.`);
                 }
-
+                if (parent_contact.trim().length < 10 || parent_contact.trim().length > 10) {
+                    res.status(400).send("Parent Contact Number should be  10 characters");
+                }
                 return {
                     rollno: parseInt(newrollno),
                     stud_fname: stud_fname.trim(),
                     stud_lname: stud_lname.trim(),
                     stud_std: parseInt(stud_std),
-                    DOB: ConverttedDate(DOB.trim()),  // Assuming ConvertedDate is a function that processes DOB
+                    DOB: ConverttedDate(DOB.trim()),
                     parent_contact: parent_contact.trim(),
                     parentname: parentname.trim(),
                     student_add: student_add.trim(),
@@ -236,7 +231,6 @@ async function addstudent(req, res) {
                 };
             });
 
-        // If there is student data, create many records in the database
         if (studentData.length > 0) {
             await prisma.student.createMany({
                 data: studentData
@@ -698,6 +692,9 @@ async function addachivement(req, res) {
     if (!student) {
         return res.status(404).json({ error: 'Student not found' });
     }
+    if (student.stud_std != teacher.allocated_standard) {
+        return res.status(404).json({ "message": "Not allowed to add Different Standard student" });
+    }
     const GRno = student.GRno;
 
     await prisma.achievement.create({
@@ -769,5 +766,75 @@ async function allachivement(req, res) {
     }
 }
 
-module.exports = { getReport, addstudent, addmarks, showsAllStudents, addactivitymarks, teacherdashboarddata, teachertabulardata, addachivement, updatemarks, allachivement };
-//                     Done      Done      //vasu             Done        //dummy data        Done               Done               Done
+async function deletestudent(req, res) {
+    const { rollno, standard } = req.body;
+    try {
+        const student = await prisma.student.findFirst({
+            where: {
+                rollno: parseInt(rollno),
+                stud_std: parseInt(standard)
+            }
+        });
+
+        if (!student) {
+            return res.status(404).json({ error: 'Student not found' });
+        }
+
+        await prisma.student.delete({
+            where: {
+                rollno: student.rollno
+            }
+        });
+
+        return res.status(200).json({ message: 'Student deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting student:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+
+function convertToISODate(dateString) {
+    const [day, month, year] = dateString.split('/');
+    const isoDateString = `${year}-${month}-${day}T00:00:00.000Z`;
+    return new Date(isoDateString);
+}
+
+async function updatestudent(req, res) {
+    const { rollno, stud_fname, stud_lname, DOB, parentcontact, parentname, student_add } = req.body;
+    try {
+        const student = await prisma.student.findFirst({
+            where: {
+                rollno: parseInt(rollno),
+            }
+        });
+
+
+        if (!student) {
+            return res.status(404).json({ error: 'Student not found' });
+        }
+        if (parentcontact.length < 10 || parentcontact.length > 10) {
+            res.status(400).send("Parent Contact Number should be  10 characters");
+        }
+        await prisma.student.update({
+            where: {
+                rollno: student.rollno
+            },
+            data: {
+                stud_fname: stud_fname,
+                stud_lname: stud_lname,
+                DOB: convertToISODate(DOB),
+                parent_contact: parentcontact,
+                parentname: parentname,
+                student_add: student_add
+            }
+        });
+
+        return res.status(200).json({ message: 'Student updated successfully' });
+    } catch (error) {
+        console.error('Error updating student:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+
+
+module.exports = { getReport, addstudent, addmarks, showsAllStudents, addactivitymarks, teacherdashboarddata, teachertabulardata, addachivement, updatemarks, allachivement, deletestudent, updatestudent };
