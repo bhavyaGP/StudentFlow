@@ -16,6 +16,13 @@ async function
             where: {
                 username: username,
                 password: password
+            },
+            include: {
+                school: {
+                    select: {
+                        resultout: true
+                    }
+                }
             }
         });
 
@@ -52,7 +59,7 @@ async function
                 httpOnly: true,
                 maxAge: 4 * 60 * 60 * 1000
             });
-            return res.json({ message: 'Login successful. You will be redirected to the admin dashboard.', token, admin, school:adminwithschool });
+            return res.json({ message: 'Login successful. You will be redirected to the admin dashboard.', token, admin, school: adminwithschool });
             // return res.redirect('/api/admin');
         }
         res.status(401).send('Invalid credentials');
