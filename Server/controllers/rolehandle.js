@@ -40,6 +40,7 @@ async function
                     school_name: true,
                     school_add: true,
                     school_dist: true,
+                    resultout: true
                 }
             });
 

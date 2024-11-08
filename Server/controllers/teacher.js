@@ -836,5 +836,48 @@ async function updatestudent(req, res) {
     }
 }
 
+async function getallMarks(req, res) {
+    const teacherId = req.teacherId || req.body.teacherId;
 
-module.exports = { getReport, addstudent, addmarks, showsAllStudents, addactivitymarks, teacherdashboarddata, teachertabulardata, addachivement, updatemarks, allachivement, deletestudent, updatestudent };
+    const teacher = await prisma.teacher.findUnique({
+        where: { teacher_id: teacherId },
+        select: { school_id: true, allocated_standard: true }
+    });
+    const standard = teacher.allocated_standard;
+    const allstudentmarks = await prisma.student.findMany({
+        where: {
+            stud_std: parseInt(standard)
+        },
+        include: {
+            grades: {
+                include: {
+                    subject: true
+                }
+            },
+            activities: true
+        }
+    }).then(students => {
+        const studentMarks = students.map(student => ({
+            rollno: student.rollno,
+            firstName: student.stud_fname,
+            lastName: student.stud_lname,
+            grades: student.grades.map(grade => ({
+                subject: grade.subject.subject_name,
+                marksObtained: grade.marks_obtained,
+                maxMarks: grade.max_marks,
+                year: grade.year
+            })),
+            activities: student.activities.map(activity => ({
+                activityId: activity.activity_id,
+                activityName: activity.activity_name,
+                marksObtained: activity.marks_obtained,
+                totalMarks: activity.total_marks
+            }))
+        }));
+        res.json(studentMarks);
+    }).catch(error => {
+        console.error('Error fetching student marks:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    });
+}
+module.exports = { getReport, addstudent, addmarks, showsAllStudents, addactivitymarks, teacherdashboarddata, teachertabulardata, addachivement, updatemarks, allachivement, deletestudent, updatestudent, getallMarks };
