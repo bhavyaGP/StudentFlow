@@ -259,9 +259,9 @@ async function addmarks(req, res) {
 
         const parsedTeacherId = req.teacherId;
 
-        const { school_id: teacherSchoolId } = await prisma.teacher.findUnique({
+        const { school_id: teacherSchoolId, allocated_standard } = await prisma.teacher.findUnique({
             where: { teacher_id: parsedTeacherId },
-            select: { school_id: true }
+            select: { school_id: true, allocated_standard: true }
         });
 
         if (!teacherSchoolId) {
@@ -273,11 +273,24 @@ async function addmarks(req, res) {
 
         const subjects = ['ENG301', 'GUJ101', 'MATH101', 'SCI201', 'SS401'];
 
-        // Process each student's marks
         for (const student of jsonObj) {
             for (const subject of subjects) {
                 const rollno = parseInt(student.rollno);
                 const marks_obtained = parseInt(student[subject]) || 0;
+
+                //find the student std 
+                const studentstd = await prisma.student.findFirst({
+                    where: {
+                        rollno: rollno
+                    }, select: { stud_std: true, school_id: true }
+                });
+
+                if (!studentstd) {
+                    return res.status(400).send("Student not found.");
+                }
+                if (studentstd.stud_std != allocated_standard && studentstd.school_id != parsedSchoolId) {
+                    return res.status(400).send("Different Standard student not allowed");
+                }
 
                 // Check if the record already exists
                 const existingRecord = await prisma.grades.findFirst({
