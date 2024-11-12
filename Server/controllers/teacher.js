@@ -535,14 +535,24 @@ async function teacherdashboarddata(req, res) {
         // Pass/Fail students
         const passFailCount = await prisma.$queryRaw`
             SELECT 
-            SUM(CASE WHEN g.marks_obtained >= 40 THEN 1 ELSE 0 END) AS pass_count,
-            SUM(CASE WHEN g.marks_obtained < 40 THEN 1 ELSE 0 END) AS fail_count
-            FROM 
+    COUNT(CASE WHEN student_pass_status.pass_count = subject_count THEN 1 END) AS pass_count,
+    COUNT(CASE WHEN student_pass_status.pass_count < subject_count THEN 1 END) AS fail_count
+FROM 
+    (
+        SELECT 
+            s.rollno,
+            COUNT(CASE WHEN g.marks_obtained >= 40 THEN 1 END) AS pass_count,
+            COUNT(*) AS subject_count
+        FROM 
             grades g
-            JOIN 
+        JOIN 
             student s ON g.rollno = s.rollno
-            WHERE 
-            s.stud_std = ${standard};
+        WHERE 
+            s.stud_std = ${standard}    
+        GROUP BY 
+            s.rollno
+    ) AS student_pass_status;
+;
         `;
 
         const passCount = Number(passFailCount[0].pass_count); // Convert to number
