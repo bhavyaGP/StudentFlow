@@ -487,9 +487,10 @@ async function teacherdashboarddata(req, res) {
     try {
         console.log("in teacherdashboarddata function");
 
-        console.log(req.body.teacherId);
+        // console.log("body:", req.body.teacherId);
+        // console.log("req:", req.teacherId);
 
-        const teacherid = req.teacherId || req.body.teacherId;
+        const teacherid = req.teacherId || parseInt(req.body.teacherId);
         const teacher = await prisma.teacher.findUnique({
             where: { teacher_id: teacherid },
             select: { school_id: true, allocated_standard: true }
