@@ -446,13 +446,16 @@ async function addactivitymarks(req, res) {
                         where: {
                             rollno: rollno,
                             activity_id: activity,
+                        },
+                        select: {
+                            activity_marks_id: true,
                         }
                     }).then(existingRecord => {
                         if (existingRecord) {
                             // Update existing record with new marks
                             return prisma.activityMarks.update({
                                 where: {
-                                    activitymarks_id: existingRecord.activitymarks_id
+                                    activity_marks_id: existingRecord.activity_marks_id
                                 },
                                 data: {
                                     marks_obtained: marks_obtained
@@ -519,6 +522,7 @@ async function teacherdashboarddata(req, res) {
             GROUP BY 
             g.subject_id, sub.subject_name;
         `;
+        ;
 
         const formattedData = avgMarksBySubject.map(item => ({
             subjectName: item.subject_name,
@@ -561,28 +565,44 @@ FROM
 
         // Range of percentage of students
         const rangeCountsQuery = await prisma.$queryRaw`
-            SELECT 
-            CASE 
-                WHEN g.marks_obtained BETWEEN 0 AND 50 THEN '0-50'
-                WHEN g.marks_obtained BETWEEN 51 AND 60 THEN '51-60'
-                WHEN g.marks_obtained BETWEEN 61 AND 70 THEN '61-70'
-                WHEN g.marks_obtained BETWEEN 71 AND 80 THEN '71-80'
-                WHEN g.marks_obtained BETWEEN 81 AND 90 THEN '81-90'
-                WHEN g.marks_obtained BETWEEN 91 AND 100 THEN '91-100'
-            END AS marks_range,
-            COUNT(*) AS student_count
-            FROM 
+    WITH student_averages AS (
+        SELECT 
+            g.rollno,
+            (AVG(g.marks_obtained * 100.0 / g.max_marks)) as avg_percentage
+        FROM 
             grades g
-            JOIN 
+        JOIN 
             student s ON g.rollno = s.rollno
-            WHERE 
-            s.stud_std = ${standard}  
-            GROUP BY 
-            marks_range;
-        `;
+        WHERE 
+            s.stud_std = ${standard}
+        GROUP BY 
+            g.rollno
+    )
+    SELECT 
+    CASE 
+        WHEN avg_percentage BETWEEN 0 AND 50 THEN '0-50%'
+        WHEN avg_percentage BETWEEN 51 AND 60 THEN '51-60%'
+        WHEN avg_percentage BETWEEN 61 AND 70 THEN '61-70%'
+        WHEN avg_percentage BETWEEN 71 AND 80 THEN '71-80%'
+        WHEN avg_percentage BETWEEN 81 AND 90 THEN '81-90%'
+        WHEN avg_percentage BETWEEN 91 AND 100 THEN '91-100%'
+    END AS percentage_range,
+    COUNT(*) AS student_count
+    FROM 
+        student_averages
+    GROUP BY 
+        percentage_range
+    ORDER BY
+        percentage_range;
+`;
+        console.log(rangeCountsQuery);
 
         const rangeCounts = rangeCountsQuery.reduce((acc, item) => {
-            acc[item.marks_range] = Number(item.student_count); // Convert to number
+            //remove null
+            // if (item.percentage_range === null) {
+            //     return acc;
+            // }
+            acc[item.percentage_range] = Number(item.student_count); // Convert to number
             return acc;
         }, {});
 
@@ -677,6 +697,7 @@ async function teachertabulardata(req, res) {
             WHERE 
                 s.stud_std = ${standard}; 
         `;
+        console.log(studentachivement);
 
         const convertBigIntToString = (obj) => {
             for (let key in obj) {
