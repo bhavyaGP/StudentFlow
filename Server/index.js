@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors')
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+const morgan = require('morgan');
 require('dotenv').config();
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
@@ -19,6 +21,7 @@ const path = require('path');
 app.set("view engine", "ejs");
 app.set("views", path.resolve("./views"));
 
+app.use(morgan("[:date[clf]] :method :url :status :res[content-length] - :response-time ms"));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
