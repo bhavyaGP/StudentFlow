@@ -801,7 +801,48 @@ async function updatemarks(req, res) {
 async function allachivement(req, res) {
     try {
 
+
+
         const achivement = await prisma.achievement.findMany();
+        const achievementsWithStudentDetails = await Promise.all(
+            achivement.map(async (ach) => {
+                const student = await prisma.student.findUnique({
+                    where: { GRno: ach.GRno },
+                    select: {
+                        rollno: true,
+                        stud_fname: true,
+                        stud_lname: true,
+                        stud_std: true,
+                        DOB: true,
+                        parent_contact: true,
+                        parentname: true,
+                        student_add: true,
+                    },
+                });
+
+                return {
+                    ...ach,
+                    student: student ? {
+                        rollno: student.rollno,
+                        firstName: student.stud_fname,
+                        lastName: student.stud_lname,
+                        standard: student.stud_std,
+                        dateOfBirth: student.DOB,
+                        parentContact: student.parent_contact,
+                        parentName: student.parentname,
+                        address: student.student_add,
+                    } : null,
+                };
+            })
+        );
+
+        return res.json(achievementsWithStudentDetails);
+
+
+
+
+
+
         return res.json(achivement);
 
     }
