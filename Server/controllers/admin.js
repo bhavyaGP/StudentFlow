@@ -64,11 +64,8 @@ async function registerTeacher(req, res) {
         });
 
         // Send email to teacher
-<<<<<<< HEAD
         sendMail({ to: teacher_email, teacherName: teacher_fname + " " + teacher_lname, username, password: ddmmyyyyPassword });
-=======
         sendMail({to:teacher_email,teacher_fname,username,password:ddmmyyyyPassword});
->>>>>>> cc5c4920a65cae2e888003e62c307f3c7c3e3357
         res.status(201).json(newTeacher);
     } catch (error) {
         console.error('Error creating teacher:', error);
@@ -88,7 +85,6 @@ async function dashboarddata(req, res) {
         const graph1 = await prisma.$queryRaw`
             SELECT 
             s.stud_std AS "std",
-<<<<<<< HEAD
             COUNT(DISTINCT s.rollno) AS "no_of_students",
             SUM(CASE WHEN student_status.pass = 1 THEN 1 ELSE 0 END) AS "pass",
             SUM(CASE WHEN student_status.pass = 0 THEN 1 ELSE 0 END) AS "fail"
@@ -103,20 +99,17 @@ async function dashboarddata(req, res) {
                 GROUP BY 
                     rollno
             ) AS student_status ON s.rollno = student_status.rollno
-=======
             SUM(CASE WHEN g.marks_obtained >= 40 THEN 1 ELSE 0 END) AS "pass",
             SUM(CASE WHEN g.marks_obtained < 40 THEN 1 ELSE 0 END) AS "fail"
             FROM 
                 student s
             JOIN 
                 grades g ON s.rollno = g.rollno
->>>>>>> cc5c4920a65cae2e888003e62c307f3c7c3e3357
             GROUP BY 
                 s.stud_std;
             `;
 
         const graph2 = await prisma.$queryRaw`
-<<<<<<< HEAD
     SELECT 
     s.stud_std AS "std",
     COUNT(DISTINCT s.rollno) AS "no_of_students"
@@ -156,7 +149,6 @@ JOIN (
 ) AS student_avg ON s.rollno = student_avg.rollno
 GROUP BY 
     s.stud_std;
-=======
             SELECT 
             s.stud_std AS "std",
             COUNT(DISTINCT s.rollno) AS "no_of_students"
@@ -171,7 +163,7 @@ GROUP BY
             `;
         const graph3 = await prisma.$queryRaw`
             SELECT
-                 s.stud_std AS "std",
+                s.stud_std AS "std",
             COUNT(DISTINCT s.rollno) AS "no_of_students"
             FROM 
                 student s
@@ -189,7 +181,6 @@ GROUP BY
             SELECT 
             s.stud_std AS "std",
             COUNT(DISTINCT s.rollno) AS "no_of_students"
-<<<<<<< HEAD
         FROM 
             student s
         JOIN (
@@ -234,12 +225,9 @@ GROUP BY
             graph3: convertBigIntToString(graph3),
             graph4: convertBigIntToString(graph4)
         });
-<<<<<<< HEAD
     }
     catch (error) {
-=======
     } catch (error) {
->>>>>>> cc5c4920a65cae2e888003e62c307f3c7c3e3357
         console.error('Error fetching dashboard data:', error);
         res.status(500).json({ error: 'Failed to fetch dashboard data', details: error.message });
     }
@@ -317,11 +305,8 @@ async function tabulardata(req, res) {
 
 async function declareResult(req, res) {
     const { isResultOut } = req.body;
-<<<<<<< HEAD
     setResultStatus(isResultOut, req.adminID);
-=======
     setResultStatus(isResultOut,req.adminID);
->>>>>>> cc5c4920a65cae2e888003e62c307f3c7c3e3357
     res.status(200).json({ message: `Result status set to ${isResultOut}` });
 }
 
@@ -344,10 +329,7 @@ async function teacherdata(req, res) {
                 school_id: adminID
             }
         });
-<<<<<<< HEAD
 
-=======
->>>>>>> cc5c4920a65cae2e888003e62c307f3c7c3e3357
         res.status(200).json(teachers);
     } catch (error) {
         console.error('Error fetching teachers:', error);

@@ -51,8 +51,4 @@ router.post('/updatestudent', authenticateTeacher, updatestudent);
 router.delete('/deletestudent', authenticateTeacher, deletestudent);
 router.get("/getallmarks", authenticateTeacher, getallMarks);
 
-<<<<<<< HEAD
 module.exports = router;
-=======
-module.exports = router;
->>>>>>> cc5c4920a65cae2e888003e62c307f3c7c3e3357
