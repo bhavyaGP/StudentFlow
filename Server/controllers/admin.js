@@ -161,20 +161,7 @@ GROUP BY
             HAVING 
                     AVG(g.marks_obtained) >= 81;
             `;
-        const graph3 = await prisma.$queryRaw`
-            SELECT
-                s.stud_std AS "std",
-            COUNT(DISTINCT s.rollno) AS "no_of_students"
-            FROM 
-                student s
-            JOIN 
-                grades g ON s.rollno = g.rollno
-            GROUP BY 
-                s.stud_std
-            HAVING 
-                AVG(g.marks_obtained) < 50;
->>>>>>> cc5c4920a65cae2e888003e62c307f3c7c3e3357
-            `;
+        
 
         const graph4 = await prisma.$queryRaw` 
             
@@ -227,7 +214,6 @@ GROUP BY
         });
     }
     catch (error) {
-    } catch (error) {
         console.error('Error fetching dashboard data:', error);
         res.status(500).json({ error: 'Failed to fetch dashboard data', details: error.message });
     }
