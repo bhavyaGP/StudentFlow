@@ -46,8 +46,13 @@ async function sendMail({ to , teacherName, username, password }) {
 </head>
 <body>
     <div class="container">
+<<<<<<< HEAD
         <h1>Welcome to ProgressMatrix!</h1>
         <p>Dear ${teacherName || `teacher`},</p>
+=======
+        <h1>Welcome to Our Teaching Platform!</h1>
+        <p>Dear ${teacherName},</p>
+>>>>>>> cc5c4920a65cae2e888003e62c307f3c7c3e3357
         <p>Congratulations! You have been successfully registered as a teacher on our platform. We're excited to have you join our community of educators.</p>
         
         <div class="credentials">
@@ -78,8 +83,13 @@ async function sendMail({ to , teacherName, username, password }) {
                 name: "Bhavya Prajapati",
                 email: process.env.EMAIL_USERNAME, // Sender email
             },
+<<<<<<< HEAD
             subject: 'Welcome to ProgressMatrix!',
             text: 'Welcome to ProgressMatrix!',
+=======
+            subject: 'Welcome to Our Teaching Platform!',
+            text: 'Welcome to Our Teaching Platform!',
+>>>>>>> cc5c4920a65cae2e888003e62c307f3c7c3e3357
             html: html
         };  
         await sgMail.send(msg);

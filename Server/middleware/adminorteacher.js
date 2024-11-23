@@ -30,4 +30,9 @@ function authenticateTeacherOrAdmin(req, res, next) {
     }
 }
 
+<<<<<<< HEAD
 module.exports = { authenticateTeacherOrAdmin };
+=======
+module.exports = { authenticateTeacherOrAdmin };
+
+>>>>>>> cc5c4920a65cae2e888003e62c307f3c7c3e3357

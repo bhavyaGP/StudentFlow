@@ -21,6 +21,7 @@ const path = require('path');
 app.set("view engine", "ejs");
 app.set("views", path.resolve("./views"));
 
+<<<<<<< HEAD
 const corsOptions = {
     origin: 'http://localhost:5173', 
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -30,6 +31,10 @@ const corsOptions = {
 
 app.use(morgan("[:date[clf]] :method :url :status :res[content-length] - :response-time ms"));
 app.use(cors(corsOptions));
+=======
+app.use(morgan("[:date[clf]] :method :url :status :res[content-length] - :response-time ms"));
+app.use(cors());
+>>>>>>> cc5c4920a65cae2e888003e62c307f3c7c3e3357
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 

@@ -57,7 +57,11 @@ async function
             token = setAdmin(admin);
             res.cookie('authToken', token, {
                 httpOnly: true,
+<<<<<<< HEAD
                 maxAge: 24 * 60 * 60 * 1000
+=======
+                maxAge: 4 * 60 * 60 * 1000
+>>>>>>> cc5c4920a65cae2e888003e62c307f3c7c3e3357
             });
             return res.json({ message: 'Login successful. You will be redirected to the admin dashboard.', token, admin, school: adminwithschool });
             // return res.redirect('/api/admin');

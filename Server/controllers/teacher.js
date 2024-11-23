@@ -5,7 +5,10 @@ const { setUser } = require('../services/auth.js');
 const csvtojson = require('csvtojson');
 const fs = require('fs');
 const path = require('path');
+<<<<<<< HEAD
 const { Console } = require('console');
+=======
+>>>>>>> cc5c4920a65cae2e888003e62c307f3c7c3e3357
 
 
 async function getReport(req, res) {
@@ -491,8 +494,13 @@ async function teacherdashboarddata(req, res) {
     try {
         console.log("in teacherdashboarddata function");
 
+<<<<<<< HEAD
         console.log("body:", req.body.teacherId);
         console.log("req:", req.teacherId);
+=======
+        // console.log("body:", req.body.teacherId);
+        // console.log("req:", req.teacherId);
+>>>>>>> cc5c4920a65cae2e888003e62c307f3c7c3e3357
 
         const teacherid = req.teacherId || parseInt(req.body.teacherId);
         const teacher = await prisma.teacher.findUnique({
@@ -527,7 +535,11 @@ async function teacherdashboarddata(req, res) {
 
         const formattedData = avgMarksBySubject.map(item => ({
             subjectName: item.subject_name,
+<<<<<<< HEAD
             avgMarks: Number(item.average_marks).toFixed(2) // Convert to number
+=======
+            avgMarks: Number(item.average_marks) // Convert to number
+>>>>>>> cc5c4920a65cae2e888003e62c307f3c7c3e3357
         }));
 
         // Total students count
@@ -547,7 +559,11 @@ FROM
     (
         SELECT 
             s.rollno,
+<<<<<<< HEAD
             COUNT(CASE WHEN g.marks_obtained >= 33 THEN 1 END) AS pass_count,
+=======
+            COUNT(CASE WHEN g.marks_obtained >= 40 THEN 1 END) AS pass_count,
+>>>>>>> cc5c4920a65cae2e888003e62c307f3c7c3e3357
             COUNT(*) AS subject_count
         FROM 
             grades g
@@ -619,7 +635,11 @@ FROM
             JOIN 
             student s ON am.rollno = s.rollno
             WHERE 
+<<<<<<< HEAD
             am.marks_obtained >= 45 
+=======
+            am.marks_obtained > 45 
+>>>>>>> cc5c4920a65cae2e888003e62c307f3c7c3e3357
             AND s.stud_std = ${standard} 
             GROUP BY 
             a.activity_id;
@@ -668,7 +688,11 @@ async function teachertabulardata(req, res) {
         am.activity_id AS "Activity Grade of student",
         COALESCE(a.achievement_title, 'N.A') AS "Achievement title",
         CASE 
+<<<<<<< HEAD
             WHEN AVG(g.marks_obtained) >= 33 THEN 'Pass'
+=======
+            WHEN AVG(g.marks_obtained) >= 40 THEN 'Pass'
+>>>>>>> cc5c4920a65cae2e888003e62c307f3c7c3e3357
             ELSE 'Fail'
         END AS "Pass / Fail"
         FROM 
@@ -801,6 +825,12 @@ async function updatemarks(req, res) {
 
 async function allachivement(req, res) {
     try {
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> cc5c4920a65cae2e888003e62c307f3c7c3e3357
         const achivement = await prisma.achievement.findMany();
         const achievementsWithStudentDetails = await Promise.all(
             achivement.map(async (ach) => {
@@ -811,6 +841,13 @@ async function allachivement(req, res) {
                         stud_fname: true,
                         stud_lname: true,
                         stud_std: true,
+<<<<<<< HEAD
+=======
+                        DOB: true,
+                        parent_contact: true,
+                        parentname: true,
+                        student_add: true,
+>>>>>>> cc5c4920a65cae2e888003e62c307f3c7c3e3357
                     },
                 });
 
@@ -821,12 +858,30 @@ async function allachivement(req, res) {
                         firstName: student.stud_fname,
                         lastName: student.stud_lname,
                         standard: student.stud_std,
+<<<<<<< HEAD
+=======
+                        dateOfBirth: student.DOB,
+                        parentContact: student.parent_contact,
+                        parentName: student.parentname,
+                        address: student.student_add,
+>>>>>>> cc5c4920a65cae2e888003e62c307f3c7c3e3357
                     } : null,
                 };
             })
         );
 
         return res.json(achievementsWithStudentDetails);
+<<<<<<< HEAD
+=======
+
+
+
+
+
+
+        return res.json(achivement);
+
+>>>>>>> cc5c4920a65cae2e888003e62c307f3c7c3e3357
     }
     catch (error) {
         console.error('Error fetching all achivement:', error);
@@ -864,23 +919,39 @@ async function deletestudent(req, res) {
 function convertToISODate(dateString) {
     const [day, month, year] = dateString.split('/');
     const isoDateString = `${year}-${month}-${day}T00:00:00.000Z`;
+<<<<<<< HEAD
     return new Date(isoDateString); 
 }
 
 async function updatestudent(req, res) {
     const { rollno, stud_fname, stud_lname, DOB, parent_contact, parentname, student_add } = req.body;
+=======
+    return new Date(isoDateString);
+}
+
+async function updatestudent(req, res) {
+    const { rollno, stud_fname, stud_lname, DOB, parentcontact, parentname, student_add } = req.body;
+>>>>>>> cc5c4920a65cae2e888003e62c307f3c7c3e3357
     try {
         const student = await prisma.student.findFirst({
             where: {
                 rollno: parseInt(rollno),
             }
         });
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> cc5c4920a65cae2e888003e62c307f3c7c3e3357
 
         if (!student) {
             return res.status(404).json({ error: 'Student not found' });
         }
+<<<<<<< HEAD
         if (parseInt(parent_contact.length) < 10 ||parseInt(parent_contact.length)  > 10) {
+=======
+        if (parentcontact.length < 10 || parentcontact.length > 10) {
+>>>>>>> cc5c4920a65cae2e888003e62c307f3c7c3e3357
             res.status(400).send("Parent Contact Number should be  10 characters");
         }
         await prisma.student.update({
@@ -891,7 +962,11 @@ async function updatestudent(req, res) {
                 stud_fname: stud_fname,
                 stud_lname: stud_lname,
                 DOB: convertToISODate(DOB),
+<<<<<<< HEAD
                 parent_contact: parent_contact,
+=======
+                parent_contact: parentcontact,
+>>>>>>> cc5c4920a65cae2e888003e62c307f3c7c3e3357
                 parentname: parentname,
                 student_add: student_add
             }
