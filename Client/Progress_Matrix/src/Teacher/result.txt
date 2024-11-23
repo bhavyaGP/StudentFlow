@@ -1,0 +1,25 @@
+
+GradientBackground:
+  background: linear-gradient(42deg, rgba(242,232,236,0.9669117647058824) 0%, rgba(187,213,245,1) 100%);
+
+
+StyledCard:
+- Background color: #F4F5F5
+
+IconWrapper:
+- Color: #F04419
+
+HeaderText:
+- Color: #DFE2E2
+
+GradientButton:
+-   background-image: linear-gradient(to right, #4776E6 0%, #8E54E9  51%, #4776E6  100%);
+
+
+StatusMessage:
+- Success color: #28a745
+- Warning color: #d4a004
+- Error color: #dc3545
+
+Card.Header:
+- Background color: #F04419 (specified in className)

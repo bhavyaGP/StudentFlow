@@ -1,35 +1,72 @@
-import { createSlice } from "@reduxjs/toolkit";
-import teacherData from '../Data/teachersData.json';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
-const initialState = {
-  teachers: null,
-  teacherClass: null,
-};
+const token = Cookies.get('auth_Token');
 
-const teacherDataSlice = createSlice({
-  name: 'teacher',
-  initialState,
-  reducers: {
-    setTeacher: (state, action) => {
-      const teacher = teacherData.find(
-        (t) => t.teacher_id === action.payload.teacher_id
-      );
-
-      if (teacher) {
-        state.teachers = teacher;
-        state.teacherClass = teacher.allocated_standard;
-      } else {
-        state.teachers = null;
-        state.teacherClass = null;
-      }
-    },
-  },
+export const fetchAllTeachers = createAsyncThunk('teachers/fetchAll', async (_, { rejectWithValue }) => {
+  try {
+    const response = await axios.get('http://localhost:3000/api/admin/allteacher', {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      withCredentials: true,
+    });
+    // console.log(response.data);
+    
+    return response.data;
+  } catch (error) {
+    if (error.response || (error.response.status === 500)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Session Expired',
+        text: 'Your session has expired. Please log in again.',
+        confirmButtonColor: '#007bff',
+      }).then(() => {
+        window.location.href = '/auth/login';
+      });
+    }
+    return rejectWithValue(error.response.data);
+  }
 });
 
-// Export the setTeacher action and the selector for teacherClass
-export const { setTeacher } = teacherDataSlice.actions;
+export const addTeacher = createAsyncThunk('teachers/add', async (teacherData) => {
+  const response = await axios.post('http://localhost:3000/api/admin/addteacher', teacherData, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    withCredentials: true,
+  });
+  return response.data;
+});
 
-// Selector function to get teacherClass from the state
-export const selectTeacherClass = (state) => state.teacher.teacherClass;
+const teacherDataSlice = createSlice({
+  name: 'teacherData',
+  initialState: {
+    teachers: [],
+    status: 'idle',
+    error: null,
+  },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchAllTeachers.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchAllTeachers.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.teachers = action.payload;
+      })
+      .addCase(fetchAllTeachers.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      })
+      .addCase(addTeacher.fulfilled, (state, action) => {
+        state.teachers.push(action.payload);
+      });
+  },
+});
 
 export default teacherDataSlice.reducer;

@@ -71,7 +71,6 @@
       "dateOfBirth": "2008-08-20T00:00:00.000Z",
       "parentContact": "9123456789"
     },
-
     {
       "studentId": 1007,
       "firstName": "Priya",
@@ -80,6 +79,15 @@
       "dateOfBirth": "2008-08-20T00:00:00.000Z",
       "parentContact": "9123456789"
     },
+    {
+      "studentId": 1007,
+      "firstName": "Priya",
+      "lastName": "Kumar",
+      "standard": 10,
+      "dateOfBirth": "2008-08-20T00:00:00.000Z",
+      "parentContact": "9123456789"
+    },
+    
     {
       "studentId": 1008,
       "firstName": "Rohan",

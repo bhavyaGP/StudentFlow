@@ -1,0 +1,16 @@
+marks >=45   ->  A+
+marks >=40   ->  A
+marks >=35   ->  B+
+marks >=30   ->  B
+marks >=25   ->  C
+marks <25    ->  D
+
+
+
+in result >= 33  pass...
+activity >= 45
+dashboarddata->avgMarksBySubject ...toFixed(2)
+rollhandle ---> maxAge : 24hr
+
+
+admin -> dashboarddata 33

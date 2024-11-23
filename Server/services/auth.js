@@ -7,7 +7,7 @@ function setTeacher(teacher) {
             role: 'teacher'
         },
         process.env.JWT_SECRET,
-        { expiresIn: '2h' }
+        { expiresIn: '24h' }
     );
 }
 
@@ -19,7 +19,7 @@ function setAdmin(admin) {
             role: 'admin'
         },
         process.env.JWT_SECRET,
-        { expiresIn: '2h' }
+        { expiresIn: '24h' }
     );
 }
 

@@ -1,15 +1,42 @@
-import { createSlice } from '@reduxjs/toolkit';
-import studentData from '../Data/studentData.json';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
+import Cookies from 'js-cookie';
+
+const token = Cookies.get('auth_Token');
+
+export const fetchStudents = createAsyncThunk('students/fetchStudents', async () => {
+  const response = await axios.get('http://localhost:3000/api/teacher/allstudent', {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    withCredentials: true,
+  });
+  return response.data;
+});
 
 const studentDataSlice = createSlice({
-  name:'AllstudentData',
-  initialState:{
-    data: studentData,
+  name: 'studentData',
+  initialState: {
+    students: [],
+    status: 'idle',
+    error: null,
   },
-  reducers:{
-    
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchStudents.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchStudents.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.students = action.payload;
+      })
+      .addCase(fetchStudents.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      });
   },
 });
 
-export const getStudentData = (state) => state.AllstudentData.data;
 export default studentDataSlice.reducer;

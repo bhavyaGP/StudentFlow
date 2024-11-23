@@ -10,7 +10,11 @@ router.get('/', async (req, res) => {
         return res.redirect('/loggin');
     }
     const user = getUser(token);
-    console.log(user)
+    console.log(user);
+
+    if (!user) {
+        return res.redirect('/loggin');
+    }
 
     if (user.role === 'admin') {
         return res.redirect('/api/admin');
@@ -19,15 +23,16 @@ router.get('/', async (req, res) => {
         return res.redirect('/api/teacher');
     }
 });
-router.get('/loggin', async (req, res) => {
-    console.log("Login page");
-    res.render('login');
-});
+
+// router.get("/login", (req, res) => {
+//     res.render("login");
+// })
 
 router.post('/login', handlebasiclogin);
+
 //signout route
 router.get('/signout', async (req, res) => {
     res.clearCookie('authToken');
-    res.redirect('/loggin');
+    res.redirect('/login');
 });
 module.exports = router;
