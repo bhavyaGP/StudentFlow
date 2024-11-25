@@ -37,7 +37,7 @@ const ResultDeclaration = () => {
 
     axios.request(config)
       .then((response) => {
-        console.log(JSON.stringify(response.data));
+        // console.log(JSON.stringify(response.data));
         dispatch(updateResultStatus(!resultStatus));
         Swal.fire({
           icon: 'success',

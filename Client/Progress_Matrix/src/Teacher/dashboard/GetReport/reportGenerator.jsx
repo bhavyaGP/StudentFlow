@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
 
 const ReportGenerator = ({ ReportData }) => {
 
-  console.log("report generator recieved : ", ReportData);
+  // console.log("report generator recieved : ", ReportData);
   
 
   const getGrade = (marks) => {

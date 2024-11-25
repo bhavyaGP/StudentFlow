@@ -77,8 +77,8 @@ const ClassWiseDashboard = () => {
   const handleCheckDataAndView = (classData) => {
     const graphExists = !!graphData[classData.standard];
     const tableDataExists = !!studentData[classData.standard];
-    console.log("Checking data for Standard:", classData.standard);
-    console.log("Graph Exists:", graphExists, "Table Exists:", tableDataExists);
+    // console.log("Checking data for Standard:", classData.standard);
+    // console.log("Graph Exists:", graphExists, "Table Exists:", tableDataExists);
 
     if (!graphExists || !tableDataExists) {
       handleShowErrorAndReset();

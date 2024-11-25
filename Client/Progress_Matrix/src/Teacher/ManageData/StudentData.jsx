@@ -128,7 +128,7 @@ const StudentList = () => {
           standard: standard, // Replace with the appropriate standard if needed
         });
 
-        console.log('Deleted student data:', data);
+        // console.log('Deleted student data:', data);
 
         const config = {
           method: 'delete',
@@ -144,7 +144,7 @@ const StudentList = () => {
 
         axios.request(config)
           .then((response) => {
-            console.log('Deleted student data:', response.data);
+            // console.log('Deleted student data:', response.data);
             Swal.fire({
               icon: 'success',
               title: 'Success',
@@ -210,7 +210,7 @@ const StudentList = () => {
       parentname: editData.parentName,
       student_add: editData.studentAddress
     });
-    console.log('Updated student data:', data);
+    // console.log('Updated student data:', data);
 
     const config = {
       method: 'post',
@@ -226,7 +226,7 @@ const StudentList = () => {
 
     axios.request(config)
       .then((response) => {
-        console.log('Updated student data:', response.data);
+        // console.log('Updated student data:', response.data);
         setShowEditModal(false);
         Swal.fire({
           icon: 'success',
@@ -253,9 +253,9 @@ const StudentList = () => {
   };
 
   const handleAchievementSubmit = () => {
-    console.log(`Achievement Title : ${achievementTitle}`);
-    console.log(`Roll No: ${modalStudent.rollno}`);
-    console.log(`Achievement Date: ${achievementDate}`);
+    // console.log(`Achievement Title : ${achievementTitle}`);
+    // console.log(`Roll No: ${modalStudent.rollno}`);
+    // console.log(`Achievement Date: ${achievementDate}`);
     if (!achievementTitle || !achievementDate) {
       Swal.fire({
         icon: 'error',
@@ -286,7 +286,7 @@ const StudentList = () => {
 
     axios.request(config)
       .then((response) => {
-        console.log(JSON.stringify(response.data));
+        // console.log(JSON.stringify(response.data));
         Swal.fire({
           icon: 'success',
           title: 'Success',

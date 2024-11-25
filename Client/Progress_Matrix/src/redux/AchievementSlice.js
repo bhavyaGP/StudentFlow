@@ -14,7 +14,7 @@ export const fetchAchievements = createAsyncThunk(
       },
       withCredentials: true,
     });
-    console.log('Achievements:', response.data);
+    // console.log('Achievements:', response.data);
     return response.data;
   }
 );
