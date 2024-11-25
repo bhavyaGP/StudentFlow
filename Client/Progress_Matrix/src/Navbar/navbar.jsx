@@ -225,7 +225,7 @@ const AppNavbar = () => {
             </span>
           </DropButton>
           {dropdownOpen && (
-            <DropdownMenu>
+            <DropdownMenu style={{zIndex:1000}}>
               <button onClick={handleShow}>Profile</button>
               <button onClick={handleLogout}>Logout</button>
             </DropdownMenu>

@@ -46,7 +46,7 @@ export const fetchDashboardData = createAsyncThunk('dashboard/fetchData', async 
   }
 
   const response = await axios.request(config);
-  console.log('Dashboard Data:', response.data);
+  // console.log('Dashboard Data:', response.data);
   return response.data;
 });
 

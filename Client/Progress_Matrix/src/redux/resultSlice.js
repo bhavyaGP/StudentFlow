@@ -18,7 +18,7 @@ export const fetchResultList = createAsyncThunk('result/fetchResultList', async 
   };
 
   const response = await axios.request(config);
-  console.log('Result List:', response.data);
+  // console.log('Result List:', response.data);
   return response.data;
 });
 

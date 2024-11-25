@@ -162,7 +162,7 @@ const ResultUpload = (props) => {
         withCredentials: true,
       });
 
-      console.log("response : ", response);
+      // console.log("response : ", response);
 
       if (response.status === 200) {
         setUploadStatus({ success: true, message: 'File uploaded successfully!' });

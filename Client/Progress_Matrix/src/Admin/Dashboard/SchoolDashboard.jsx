@@ -63,7 +63,7 @@ const SchoolDashboard = () => {
 
       try {
         const response = await axios.request(config);
-        console.log(response.data);
+        // console.log(response.data);
         setGraphData(response.data.graph1);
         setDataGraph2(response.data.graph2);
         setDataGraph3(response.data.graph3);
@@ -95,7 +95,7 @@ const SchoolDashboard = () => {
 
         try {
           const response = await axios.request(config);
-          console.log(JSON.stringify(response.data));
+          // console.log(JSON.stringify(response.data));
           const sortedTable1 = response.data.table1.sort((a, b) => a.stuID - b.stuID);
           const sortedTable2 = response.data.table2.sort((a, b) => a.stuID - b.stuID);
           setTableData({ table1: sortedTable1, table2: sortedTable2 });

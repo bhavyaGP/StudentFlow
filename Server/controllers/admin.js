@@ -65,7 +65,6 @@ async function registerTeacher(req, res) {
 
         // Send email to teacher
         sendMail({ to: teacher_email, teacherName: teacher_fname + " " + teacher_lname, username, password: ddmmyyyyPassword });
-        sendMail({to:teacher_email,teacher_fname,username,password:ddmmyyyyPassword});
         res.status(201).json(newTeacher);
     } catch (error) {
         console.error('Error creating teacher:', error);
@@ -99,12 +98,6 @@ async function dashboarddata(req, res) {
                 GROUP BY 
                     rollno
             ) AS student_status ON s.rollno = student_status.rollno
-            SUM(CASE WHEN g.marks_obtained >= 40 THEN 1 ELSE 0 END) AS "pass",
-            SUM(CASE WHEN g.marks_obtained < 40 THEN 1 ELSE 0 END) AS "fail"
-            FROM 
-                student s
-            JOIN 
-                grades g ON s.rollno = g.rollno
             GROUP BY 
                 s.stud_std;
             `;
@@ -149,19 +142,7 @@ JOIN (
 ) AS student_avg ON s.rollno = student_avg.rollno
 GROUP BY 
     s.stud_std;
-            SELECT 
-            s.stud_std AS "std",
-            COUNT(DISTINCT s.rollno) AS "no_of_students"
-            FROM 
-                student s
-            JOIN 
-                grades g ON s.rollno = g.rollno
-            GROUP BY 
-                s.stud_std
-            HAVING 
-                    AVG(g.marks_obtained) >= 81;
             `;
-        
 
         const graph4 = await prisma.$queryRaw` 
             
@@ -183,16 +164,6 @@ GROUP BY
             ) AS student_avg ON s.rollno = student_avg.rollno
         GROUP BY 
             s.stud_std;
-=======
-            FROM 
-                student s
-            JOIN 
-                grades g ON s.rollno = g.rollno
-            GROUP BY 
-                s.stud_std
-            HAVING 
-                AVG(g.marks_obtained) BETWEEN 51 AND 80;
->>>>>>> cc5c4920a65cae2e888003e62c307f3c7c3e3357
             `;
 
         // Convert BigInt values to strings
@@ -292,7 +263,6 @@ async function tabulardata(req, res) {
 async function declareResult(req, res) {
     const { isResultOut } = req.body;
     setResultStatus(isResultOut, req.adminID);
-    setResultStatus(isResultOut,req.adminID);
     res.status(200).json({ message: `Result status set to ${isResultOut}` });
 }
 

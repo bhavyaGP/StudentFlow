@@ -28,7 +28,6 @@ const corsOptions = {
     optionsSuccessStatus: 204
 };
 
-app.use(morgan("[:date[clf]] :method :url :status :res[content-length] - :response-time ms"));
 app.use(cors(corsOptions));
 app.use(morgan("[:date[clf]] :method :url :status :res[content-length] - :response-time ms"));
 app.use(express.json());
