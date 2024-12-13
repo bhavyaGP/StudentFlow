@@ -67,7 +67,7 @@ async function registerTeacher(req, res) {
         sendMail({ to: teacher_email, teacherName: teacher_fname + " " + teacher_lname, username, password: ddmmyyyyPassword });
         res.status(201).json(newTeacher);
     } catch (error) {
-        console.error('Error creating teacher:', error);
+        // console.error('Error creating teacher:', error);
         res.status(500).json({ error: 'Failed to create teacher', details: error.message });
     }
 }
@@ -88,13 +88,13 @@ async function dashboarddata(req, res) {
             SUM(CASE WHEN student_status.pass = 1 THEN 1 ELSE 0 END) AS "pass",
             SUM(CASE WHEN student_status.pass = 0 THEN 1 ELSE 0 END) AS "fail"
             FROM 
-                student s
+                Student s
             JOIN (
                 SELECT 
                 rollno,
                 CASE WHEN MIN(marks_obtained) >= 33 THEN 1 ELSE 0 END AS pass
                 FROM 
-                    grades
+                    Grades
                 GROUP BY 
                     rollno
             ) AS student_status ON s.rollno = student_status.rollno
@@ -107,13 +107,13 @@ async function dashboarddata(req, res) {
     s.stud_std AS "std",
     COUNT(DISTINCT s.rollno) AS "no_of_students"
 FROM 
-    student s
+    Student s
 JOIN (
     SELECT 
         rollno,
         AVG((marks_obtained / max_marks) * 100) AS avg_percentage
     FROM 
-        grades
+        Grades
     GROUP BY 
         rollno
     HAVING 
@@ -128,13 +128,13 @@ GROUP BY
     s.stud_std AS "std",
     COUNT(DISTINCT s.rollno) AS "no_of_students"
 FROM 
-    student s
+    Student s
 JOIN (
     SELECT 
         rollno,
         AVG((marks_obtained / max_marks) * 100) AS avg_percentage
     FROM 
-        grades
+        Grades
     GROUP BY 
         rollno
     HAVING 
@@ -150,13 +150,13 @@ GROUP BY
             s.stud_std AS "std",
             COUNT(DISTINCT s.rollno) AS "no_of_students"
         FROM 
-            student s
+            Student s
         JOIN (
         SELECT 
             rollno,
             AVG((marks_obtained / max_marks) * 100) AS avg_percentage
         FROM 
-            grades
+            Grades
         GROUP BY 
             rollno
         HAVING 
@@ -185,7 +185,7 @@ GROUP BY
         });
     }
     catch (error) {
-        console.error('Error fetching dashboard data:', error);
+        // console.error('Error fetching dashboard data:', error);
         res.status(500).json({ error: 'Failed to fetch dashboard data', details: error.message });
     }
 }
@@ -198,7 +198,7 @@ async function tabulardata(req, res) {
             s.stud_std AS "Standard",
             AVG(g.marks_obtained) AS "% of student in Academic"
         FROM 
-            student s
+            Student s
         JOIN 
             grades g ON s.rollno = g.rollno
         GROUP BY 
@@ -212,7 +212,7 @@ async function tabulardata(req, res) {
                         student.stud_std,
                         AVG(marks_obtained) AS avg_marks
                     FROM 
-                        grades
+                        Grades
                     JOIN 
                         student ON grades.rollno = student.rollno
                     GROUP BY 
@@ -227,9 +227,9 @@ async function tabulardata(req, res) {
             CONCAT(s.stud_fname, ' ', s.stud_lname) AS "student name",
             s.stud_std AS "Standard"
         FROM 
-            student s
+            Student s
         JOIN 
-            grades g ON s.rollno = g.rollno
+            Grades g ON s.rollno = g.rollno
         GROUP BY 
             s.rollno, s.stud_std
         HAVING 
@@ -242,9 +242,9 @@ async function tabulardata(req, res) {
             a.achievement_title AS "Achievement title",
             a.date AS "Date"
         FROM 
-            student s
+            Student s
         JOIN 
-            achievement a ON s.rollno = a.GRno;  -- Assuming GRno is the foreign key in achievement
+            Achievement a ON s.rollno = a.GRno;  -- Assuming GRno is the foreign key in achievement
                 `;
 
         res.status(200).json({
@@ -255,7 +255,7 @@ async function tabulardata(req, res) {
 
     }
     catch (error) {
-        console.error('Error fetching tabular data:', error);
+        // console.error('Error fetching tabular data:', error);
         res.status(500).json({ error: 'Failed to fetch tabular data', details: error.message });
     }
 }

@@ -7,10 +7,10 @@ const checkResultDeclared = async (req, res, next) => {
   try {
     const resultDeclared = await getResultStatus(req.teacherId);
     if (resultDeclared) {
-      console.log('Result has been declared');
+      // console.log('Result has been declared');
       next();
     } else {
-      console.log('Result has not been declared');
+      // console.log('Result has not been declared');
       res.status(403).json({ message: 'Result has not been declared yet' });
     }
   } catch (error) {

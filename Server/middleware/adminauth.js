@@ -5,7 +5,7 @@ function restrictedtoadminonly(req, res, next) {
     console.log('Authenticating admin...');
     try {
         const token = req.cookies?.authToken;
-        console.log('Token:', token);
+        // console.log('Token:', token);
         
         if (!token) {
             return res.redirect('/login');

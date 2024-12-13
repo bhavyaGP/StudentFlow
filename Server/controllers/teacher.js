@@ -10,11 +10,11 @@ const { Console } = require('console');
 
 async function getReport(req, res) {
     try {
-        console.log("In getReport function");
+        // console.log("In getReport function");
 
         const teacherId = req.teacherId || req.body.teacherId;
         const rollno = req.query.rollno;
-        console.log(teacherId, rollno);
+        // console.log(teacherId, rollno);
 
         // Find the teacher and their assigned standard
         const teacher = await prisma.teacher.findUnique({
@@ -130,7 +130,7 @@ async function getReport(req, res) {
             }))
         };
 
-        console.log("Comprehensive report generated");
+        // console.log("Comprehensive report generated");
         return res.json(report);
 
     } catch (error) {
@@ -153,7 +153,7 @@ async function convertCSVtoJSON(csvFilePath) {
         const jsonObj = await csvtojson().fromFile(csvFilePath);
         const jsonFilePath = `./uploads/${path.parse(csvFilePath).name}.json`;
         await fs.promises.writeFile(jsonFilePath, JSON.stringify(jsonObj, null, 2));
-        console.log("JSON file saved:", jsonFilePath);
+        // console.log("JSON file saved:", jsonFilePath);
         return jsonObj;
     } catch (error) {
         console.error("Error converting CSV to JSON:", error);
@@ -162,12 +162,12 @@ async function convertCSVtoJSON(csvFilePath) {
 }
 
 async function addstudent(req, res) {
-    console.log("In addstudent function");
+    // console.log("In addstudent function");
 
     if (!req.file) {
         return res.status(400).send("No files were uploaded.");
     }
-    console.log("File uploaded:", req.file.filename);
+    // console.log("File uploaded:", req.file.filename);
     const csvFilePath = req.file.path;
 
     try {
@@ -247,12 +247,12 @@ async function addstudent(req, res) {
 
 
 async function addmarks(req, res) {
-    console.log("In addmarks function");
+    // console.log("In addmarks function");
 
     if (!req.file) {
         return res.status(400).send("No files were uploaded.");
     }
-    console.log("File uploaded:", req.file.filename);
+    // console.log("File uploaded:", req.file.filename);
     const csvFilePath = req.file.path;
 
     try {
@@ -270,7 +270,7 @@ async function addmarks(req, res) {
         }
 
         const parsedSchoolId = parseInt(teacherSchoolId);
-        console.log(jsonObj);
+        // console.log(jsonObj);
 
         const subjects = ['ENG301', 'GUJ101', 'MATH101', 'SCI201', 'SS401'];
 
@@ -398,13 +398,13 @@ async function showsAllStudents(req, res) {
 }
 
 async function addactivitymarks(req, res) {
-    console.log("In addactivitymarks function");
+    // console.log("In addactivitymarks function");
 
     if (!req.file) {
         return res.status(400).send("No files were uploaded.");
     }
 
-    console.log("File uploaded:", req.file.filename);
+    // console.log("File uploaded:", req.file.filename);
     const csvFilePath = req.file.path;
 
     try {
@@ -489,10 +489,10 @@ async function addactivitymarks(req, res) {
 
 async function teacherdashboarddata(req, res) {
     try {
-        console.log("in teacherdashboarddata function");
+        // console.log("in teacherdashboarddata function");
 
-        console.log("body:", req.body.teacherId);
-        console.log("req:", req.teacherId);
+        // console.log("body:", req.body.teacherId);
+        // console.log("req:", req.teacherId);
 
         const teacherid = req.teacherId || parseInt(req.body.teacherId);
         const teacher = await prisma.teacher.findUnique({
@@ -596,7 +596,7 @@ FROM
     ORDER BY
         percentage_range;
 `;
-        console.log(rangeCountsQuery);
+        // console.log(rangeCountsQuery);
 
         const rangeCounts = rangeCountsQuery.reduce((acc, item) => {
             //remove null

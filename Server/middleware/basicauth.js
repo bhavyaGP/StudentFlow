@@ -5,12 +5,12 @@ async function checkAuth(req, res, next) {
 
     const token = req.cookies?.authToken;
     if (!token) {
-        console.log("No token");
+        // console.log("No token");
         return res.redirect('/loggin');
     }
     const user = getUser(token);
     if (!user) {
-        console.log("No user");
+        // console.log("No user");
         return res.redirect('/loggin');
     }
     console.log("User:", user);
