@@ -339,7 +339,7 @@ async function getGradesForStudent(rollno) {
     try {
         const query = `
             SELECT subject_id, marks_obtained, max_marks, year
-            FROM grades
+            FROM Grades
             WHERE rollno = ${rollno}`;
 
         const grades = await prisma.$queryRawUnsafe(query);
@@ -512,11 +512,11 @@ async function teacherdashboarddata(req, res) {
             AVG(g.marks_obtained) AS average_marks,
             sub.subject_name
             FROM 
-            grades g
+            Grades g
             JOIN 
-            student s ON g.rollno = s.rollno
+            Student s ON g.rollno = s.rollno
             JOIN
-            subject sub ON g.subject_id = sub.subject_id
+            Subject sub ON g.subject_id = sub.subject_id
             WHERE 
             s.stud_std = ${standard}  
             AND g.subject_id IN ('ENG301', 'GUJ101', 'MATH101', 'SCI201', 'SS401') 
@@ -533,7 +533,7 @@ async function teacherdashboarddata(req, res) {
         // Total students count
         const studentsCountQuery = await prisma.$queryRaw`
             SELECT COUNT(*) AS students_count
-            FROM student
+            FROM Student
             WHERE stud_std = ${standard};
         `;
         const studentsCount = Number(studentsCountQuery[0].students_count); // Convert to number
@@ -550,9 +550,9 @@ FROM
             COUNT(CASE WHEN g.marks_obtained >= 33 THEN 1 END) AS pass_count,
             COUNT(*) AS subject_count
         FROM 
-            grades g
+            Grades g
         JOIN 
-            student s ON g.rollno = s.rollno
+            Student s ON g.rollno = s.rollno
         WHERE 
             s.stud_std = ${standard}    
         GROUP BY 
@@ -571,9 +571,9 @@ FROM
             g.rollno,
             (AVG(g.marks_obtained * 100.0 / g.max_marks)) as avg_percentage
         FROM 
-            grades g
+            Grades g
         JOIN 
-            student s ON g.rollno = s.rollno
+            Student s ON g.rollno = s.rollno
         WHERE 
             s.stud_std = ${standard}
         GROUP BY 
@@ -613,11 +613,11 @@ FROM
             a.activity_id AS "Activity Code",
             COUNT(DISTINCT am.rollno) AS "No of student"
             FROM 
-            activity a
+            Activity a
             JOIN 
-            activitymarks am ON a.activity_id = am.activity_id
+            ActivityMarks am ON a.activity_id = am.activity_id
             JOIN 
-            student s ON am.rollno = s.rollno
+            Student s ON am.rollno = s.rollno
             WHERE 
             am.marks_obtained >= 45 
             AND s.stud_std = ${standard} 
@@ -672,9 +672,9 @@ async function teachertabulardata(req, res) {
             ELSE 'Fail'
         END AS "Pass / Fail"
         FROM 
-            student s
+            Student s
         LEFT JOIN 
-            grades g ON s.rollno = g.rollno
+            Grades g ON s.rollno = g.rollno
         LEFT JOIN 
             activitymarks am ON s.rollno = am.rollno
         LEFT JOIN 
@@ -692,9 +692,9 @@ async function teachertabulardata(req, res) {
             a.achievement_title AS "Achievement title",
             a.date AS "Date (student achievement)"
             FROM 
-                student s
+                Student s
             JOIN 
-                achievement a ON s.rollno = a.GRno  
+                Achievement a ON s.rollno = a.GRno  
             WHERE 
                 s.stud_std = ${standard}; 
         `;
