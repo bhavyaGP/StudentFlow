@@ -6,9 +6,9 @@ const { setTeacher, setAdmin } = require('../services/auth.js');
 async function
     handlebasiclogin(req, res) {
     const { username, password } = req.body;
-    console.log(username, password);
+    // console.log(username, password);
     try {
-        let token; 4
+        let token; 
         let user;
 
         // Use findFirst to search by both username and password

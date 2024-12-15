@@ -4,7 +4,7 @@ const { handlebasiclogin } = require('../controllers/rolehandle');
 const { getUser } = require('../services/auth.js');
 
 router.get('/', async (req, res) => {
-    console.log("Home page");
+    // console.log("Home page");
     const token = req.cookies?.authToken;
     if (!token) {
         return res.redirect('/loggin');

@@ -1,7 +1,7 @@
 const { getUser } = require('../services/auth.js');
 
 function authenticateTeacherOrAdmin(req, res, next) {
-    console.log('Authenticating user (teacher or admin)...');
+    // console.log('Authenticating user (teacher or admin)...');
     try {
         const token = req.cookies?.authToken;
         // console.log('Token:', token);
@@ -11,7 +11,7 @@ function authenticateTeacherOrAdmin(req, res, next) {
         }
 
         const user = getUser(token);
-        console.log('User:', user);
+        // console.log('User:', user);
         if (user.role === 'teacher') {
             req.teacherId = user.id;
         }
@@ -21,7 +21,7 @@ function authenticateTeacherOrAdmin(req, res, next) {
         if (user.role !== 'teacher' && user.role !== 'admin') {
             return res.status(403).json({ error: 'Forbidden: Only teachers or admins can access this route' });
         }
-        console.log('Authenticated user:', req.user);
+        // console.log('Authenticated user:', req.user);
 
         next();
     } catch (error) {
