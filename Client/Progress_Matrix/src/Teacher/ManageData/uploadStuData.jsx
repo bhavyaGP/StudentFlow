@@ -113,7 +113,7 @@ const UploadFile = () => {
 
 
     try {
-      const response = await axios.post('http://localhost:3000/api/teacher/addstudent', formData, {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/teacher/addstudent`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

@@ -25,7 +25,7 @@ export const fetchDashboardData = createAsyncThunk('dashboard/fetchData', async 
   const data = JSON.stringify({ teacherId: teacherID });
 
 
-  let url = `http://localhost:3000/api/teacher/dashboarddata`;
+  let url = `${import.meta.env.VITE_BACKEND_URL}/api/teacher/dashboarddata`;
 
   // if (role === 'admin') {
   //   url += `?teacherId=${teacherID}`;

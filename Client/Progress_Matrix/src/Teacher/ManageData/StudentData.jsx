@@ -133,7 +133,7 @@ const StudentList = () => {
         const config = {
           method: 'delete',
           maxBodyLength: Infinity,
-          url: 'http://localhost:3000/api/teacher/deletestudent',
+          url: `${import.meta.env.VITE_BACKEND_URL}/api/teacher/deletestudent`,
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
@@ -215,10 +215,10 @@ const StudentList = () => {
     const config = {
       method: 'post',
       maxBodyLength: Infinity,
-      url: 'http://localhost:3000/api/teacher/updatestudent',
+      url: `${import.meta.env.VITE_BACKEND_URL}/api/teacher/updatestudent`,
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
       },
       data: data,
       withCredentials: true,
@@ -275,10 +275,10 @@ const StudentList = () => {
     let config = {
       method: 'post',
       maxBodyLength: Infinity,
-      url: 'http://localhost:3000/api/teacher/addachivement',
+      url: `${import.meta.env.VITE_BACKEND_URL}/api/teacher/addachivement`,
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
       },
       data: data,
       withCredentials: true,

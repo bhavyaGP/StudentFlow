@@ -8,7 +8,7 @@ const token = Cookies.get('auth_Token');
 export const fetchAchievements = createAsyncThunk(
   'achievements/fetchAchievements',
   async () => {
-    const response = await axios.get('http://localhost:3000/api/teacher/allachivement', {
+    const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/teacher/allachivement`, {
       headers: { 
         'Authorization': `Bearer ${token}`,
       },

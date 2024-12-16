@@ -10,7 +10,7 @@ export const fetchResultList = createAsyncThunk('result/fetchResultList', async 
   const config = {
     method: 'get',
     maxBodyLength: Infinity,
-    url: 'http://localhost:3000/api/teacher/getallmarks',
+    url: `${import.meta.env.VITE_BACKEND_URL}/api/teacher/getallmarks`,
     headers: {
       'Authorization': `Bearer ${token}`,
     },

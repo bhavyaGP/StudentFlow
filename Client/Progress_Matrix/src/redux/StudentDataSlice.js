@@ -5,7 +5,7 @@ import Cookies from 'js-cookie';
 const token = Cookies.get('auth_Token');
 
 export const fetchStudents = createAsyncThunk('students/fetchStudents', async () => {
-  const response = await axios.get('http://localhost:3000/api/teacher/allstudent', {
+  const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/teacher/allstudent`, {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,

@@ -47,7 +47,7 @@ const LoginPage = () => {
     const config = {
       method: 'post',
       maxBodyLength: Infinity,
-      url: 'http://localhost:3000/login',
+      url: `${import.meta.env.VITE_BACKEND_URL}/login`,
       headers: {
         'Content-Type': 'application/json'
       },

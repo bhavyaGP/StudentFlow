@@ -26,7 +26,7 @@ const ResultDeclaration = () => {
     const config = {
       method: 'post',
       maxBodyLength: Infinity,
-      url: 'http://localhost:3000/api/admin/declareresult',
+      url: `${import.meta.env.VITE_BACKEND_URL}/api/admin/declareresult`,
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,

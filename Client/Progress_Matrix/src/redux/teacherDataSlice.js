@@ -6,10 +6,10 @@ const token = Cookies.get('auth_Token');
 
 export const fetchAllTeachers = createAsyncThunk('teachers/fetchAll', async (_, { rejectWithValue }) => {
   try {
-    const response = await axios.get('http://localhost:3000/api/admin/allteacher', {
+    const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/admin/allteacher`, {
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
       },
       withCredentials: true,
     });
@@ -32,7 +32,7 @@ export const fetchAllTeachers = createAsyncThunk('teachers/fetchAll', async (_, 
 });
 
 export const addTeacher = createAsyncThunk('teachers/add', async (teacherData) => {
-  const response = await axios.post('http://localhost:3000/api/admin/addteacher', teacherData, {
+  const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/admin/addteacher`, teacherData, {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
