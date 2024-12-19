@@ -12,21 +12,19 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 
 
 
+  
   useEffect(() => {
-    // console.log("token in : ",token);
-    
-    if (!token) {
-
-      Swal.fire({
-        title: 'Access Denied',
-        text: `You need to login to access this page.`,
-        icon: 'warning',
-        confirmButtonText: 'OK'
-      }).then(() => {
-        setRedirectToLogin(true);
-      });
-    }
-    }, [token, location]);
+      if (!token) {
+        Swal.fire({
+          title: 'Access Denied',
+          text: `You need to login to access this page.`,
+          icon: 'warning',
+          confirmButtonText: 'OK'
+        }).then(() => {
+          setRedirectToLogin(true);
+        });
+      }
+  }, [token, location]);
 
     if (redirectToLogin) {
       return <Navigate to="/auth/login" state={{ from: location }} replace />;
@@ -40,6 +38,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
       icon: 'warning',
       confirmButtonText: 'OK'
     });
+
     return <Navigate to="/" replace />;
   }
 

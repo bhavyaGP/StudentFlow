@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Table } from "react-bootstrap";
 import { fetchAchievements } from "../redux/AchievementSlice"; 
 import { format } from "date-fns";
+import Swal from "sweetalert2";
 
 const SchoolAchievements = () => {
 

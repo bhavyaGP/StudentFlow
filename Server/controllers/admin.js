@@ -160,7 +160,7 @@ GROUP BY
         GROUP BY 
             rollno
         HAVING 
-            AVG((marks_obtained / max_marks) * 100) < 50
+            AVG((marks_obtained / max_marks) * 100) BETWEEN 50 AND 80
             ) AS student_avg ON s.rollno = student_avg.rollno
         GROUP BY 
             s.stud_std;
@@ -200,7 +200,7 @@ async function tabulardata(req, res) {
         FROM 
             Student s
         JOIN 
-            grades g ON s.rollno = g.rollno
+            Grades g ON s.rollno = g.rollno
         GROUP BY 
             s.rollno, s.stud_fname, s.stud_lname, s.stud_std
         HAVING 
@@ -209,14 +209,14 @@ async function tabulardata(req, res) {
                     MAX(avg_marks)
                 FROM (
                     SELECT 
-                        student.stud_std,
+                        Student.stud_std,
                         AVG(marks_obtained) AS avg_marks
                     FROM 
                         Grades
                     JOIN 
-                        student ON grades.rollno = student.rollno
+                        Student ON Grades.rollno = Student.rollno
                     GROUP BY 
-                        student.stud_std, student.rollno
+                        Student.stud_std, Student.rollno
                 ) AS subquery
                 WHERE 
                     subquery.stud_std = s.stud_std
@@ -230,10 +230,10 @@ async function tabulardata(req, res) {
             Student s
         JOIN 
             Grades g ON s.rollno = g.rollno
+        WHERE 
+            g.marks_obtained < 33
         GROUP BY 
-            s.rollno, s.stud_std
-        HAVING 
-            AVG(g.marks_obtained) < 40;
+            s.rollno, s.stud_std;
         `;
         const table3 = await prisma.$queryRaw` SELECT 
             s.rollno AS "student Id",
@@ -255,7 +255,7 @@ async function tabulardata(req, res) {
 
     }
     catch (error) {
-        // console.error('Error fetching tabular data:', error);
+        console.error('Error fetching tabular data:', error);
         res.status(500).json({ error: 'Failed to fetch tabular data', details: error.message });
     }
 }

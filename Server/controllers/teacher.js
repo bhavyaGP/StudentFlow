@@ -584,11 +584,11 @@ FROM
     SELECT 
     CASE 
         WHEN avg_percentage BETWEEN 0 AND 50 THEN '0-50%'
-        WHEN avg_percentage BETWEEN 51 AND 60 THEN '51-60%'
-        WHEN avg_percentage BETWEEN 61 AND 70 THEN '61-70%'
-        WHEN avg_percentage BETWEEN 71 AND 80 THEN '71-80%'
-        WHEN avg_percentage BETWEEN 81 AND 90 THEN '81-90%'
-        WHEN avg_percentage BETWEEN 91 AND 100 THEN '91-100%'
+        WHEN avg_percentage BETWEEN 50 AND 60 THEN '51-60%'
+        WHEN avg_percentage BETWEEN 60 AND 70 THEN '61-70%'
+        WHEN avg_percentage BETWEEN 70 AND 80 THEN '71-80%'
+        WHEN avg_percentage BETWEEN 80 AND 90 THEN '81-90%'
+        WHEN avg_percentage BETWEEN 90 AND 100 THEN '91-100%'
     END AS percentage_range,
     COUNT(*) AS student_count
     FROM 

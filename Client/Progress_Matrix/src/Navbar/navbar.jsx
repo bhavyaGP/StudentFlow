@@ -195,10 +195,6 @@ const AppNavbar = () => {
   };
 
 
-
-
-
-
   return (
     <>
       <NavbarContainer>
