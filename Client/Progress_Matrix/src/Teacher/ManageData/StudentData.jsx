@@ -559,7 +559,7 @@ const StudentList = () => {
             </Form>
           </Modal.Body>
         </Modal>
-      )};
+      )}
     </div>
   );
 };

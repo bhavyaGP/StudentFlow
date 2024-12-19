@@ -1,7 +1,6 @@
 import React, { useState , useEffect } from "react";
 import Sidebar from "./sidebar";
 import SchoolDashboard from "./SchoolDashboard";
-// import ClassWiseDashboard from "./ClassWiseDashboard";
 import SchoolAchievements from "../../Achievements/SchoolAchievement";
 import ResultDeclaration from "./ResultDeclaration";
 import { Container, Row, Col } from "react-bootstrap";

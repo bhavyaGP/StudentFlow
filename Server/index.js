@@ -22,7 +22,7 @@ app.set("view engine", "ejs");
 app.set("views", path.resolve("./views"));
 
 const corsOptions = {
-    origin: 'http://localhost:5173', 
+    origin: 'http://localhost:5173' || 'http://localhost:80' || 'http://localhost:3000', 
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true, 
     optionsSuccessStatus: 204

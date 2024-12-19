@@ -2,7 +2,7 @@ import React from 'react';
 import { ListGroup , OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import { selectUserProfile, selectResultStatus } from '../../redux/userSlice';
-import { FaSchool, FaChalkboardTeacher } from 'react-icons/fa';
+import { FaSchool } from 'react-icons/fa';
 import { GrAnnounce, GrAchievement } from 'react-icons/gr';
 import SchoolLogo from '../../assets/gvm.png';
 
@@ -21,12 +21,6 @@ const Sidebar = ({ setActiveComponent, activeComponent }) => {
         label: 'Overall School',
         disabled: !resultStatus,
       },
-      // {
-      //   key: 'class',
-      //   icon: <FaChalkboardTeacher className="me-3" size={25} />,
-      //   label: 'Class Wise',
-      //   disabled: !resultStatus,
-      // },
       {
         key: 'achievements',
         icon: <GrAchievement className="me-3" size={20} />,

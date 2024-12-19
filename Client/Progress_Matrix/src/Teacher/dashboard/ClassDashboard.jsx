@@ -69,7 +69,7 @@ const ClassDashboard = () => {
 
   useEffect(() => {
     if (dashboardData) {
-      console.log(dashboardData);
+      // console.log(dashboardData);
 
       Swal.close();
       if (dashboardData.studentsCount === 0 ||

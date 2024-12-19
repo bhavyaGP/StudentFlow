@@ -203,7 +203,7 @@ const SchoolDashboard = () => {
               </Card.Body>
             </Card>
           </Col>
-          <Col xs={8} sm={8} md={5} className="mb-4">
+          <Col xs={12} sm={12} md={5} className="mb-4">
             <Card style={{ height: 'auto' }}>
               <Card.Title style={{ padding: '20px', paddingBottom: '0px' }}>2. Students having {`>`} 80%. </Card.Title>
               <Card.Body>
@@ -223,7 +223,7 @@ const SchoolDashboard = () => {
               </Card.Body>
             </Card>
           </Col>
-          <Col xs={8} sm={8} md={5} className="mb-3">
+          <Col xs={12} sm={12} md={5} className="mb-3">
             <Card style={{ height: 'auto' }}>
               <Card.Title style={{ padding: '20px', paddingBottom: '0px' }}>3. Students having {`<`} 50%.</Card.Title>
               <Card.Body>
@@ -243,7 +243,7 @@ const SchoolDashboard = () => {
               </Card.Body>
             </Card>
           </Col>
-          <Col xs={8} sm={8} md={5} className="mb-3">
+          <Col xs={12} sm={12} md={5} className="mb-3">
             <Card style={{ height: 'auto' }}>
               <Card.Title style={{ padding: '20px', paddingBottom: '0px' }}>4. Student having % in range of (50-80)%</Card.Title>
               <Card.Body>
