@@ -57,7 +57,7 @@ const SchoolDashboard = () => {
       let config = {
         method: 'get',
         maxBodyLength: Infinity,
-        url: 'http://localhost:3000/api/admin/',
+        url: `${import.meta.env.VITE_BACKEND_URL}/api/admin/`,
         withCredentials: true,
       };
 
@@ -89,7 +89,7 @@ const SchoolDashboard = () => {
         let config = {
           method: 'get',
           maxBodyLength: Infinity,
-          url: 'http://localhost:3000/api/admin/tabulardata',
+          url: `${import.meta.env.VITE_BACKEND_URL}/api/admin/tabulardata`,
           withCredentials: true,
         };
 

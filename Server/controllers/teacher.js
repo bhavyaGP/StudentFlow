@@ -151,15 +151,16 @@ function ConverttedDate(date) {
 async function convertCSVtoJSON(csvFilePath) {
     try {
         const jsonObj = await csvtojson().fromFile(csvFilePath);
-        const jsonFilePath = `./uploads/${path.parse(csvFilePath).name}.json`;
+        const jsonFilePath = `/uploads/${path.parse(csvFilePath).name}.json`; // Use /tmp for temporary storage
         await fs.promises.writeFile(jsonFilePath, JSON.stringify(jsonObj, null, 2));
-        // console.log("JSON file saved:", jsonFilePath);
+        console.log("JSON file saved:", jsonFilePath);
         return jsonObj;
     } catch (error) {
         console.error("Error converting CSV to JSON:", error);
         throw new Error("Error converting CSV to JSON");
     }
 }
+
 
 async function addstudent(req, res) {
     // console.log("In addstudent function");
@@ -389,7 +390,8 @@ async function showsAllStudents(req, res) {
                 };
             })
         );
-
+        // console.log(students);
+        
         return res.json(students);
     } catch (error) {
         console.error('Error showing all students:', error);
@@ -637,7 +639,6 @@ FROM
             rangeCounts,
             activityData
         };
-
         return res.json(dashboardData);
 
     } catch (error) {

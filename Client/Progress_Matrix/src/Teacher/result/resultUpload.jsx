@@ -151,8 +151,8 @@ const ResultUpload = (props) => {
     formData.append('excelFile', file);
 
     const apiUrl = !props.isAcademic
-      ? 'http://localhost:3000/api/teacher/activitymarks' 
-      : 'http://localhost:3000/api/teacher/uploadmarks';
+      ? `${import.meta.env.VITE_BACKEND_URL}/api/teacher/activitymarks` 
+      : `${import.meta.env.VITE_BACKEND_URL}/api/teacher/uploadmarks`;
 
     try {
       const response = await axios.post(apiUrl, formData, {

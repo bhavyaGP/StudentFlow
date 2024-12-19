@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors')
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT|| 3000;
 
 const morgan = require('morgan');
 require('dotenv').config();
@@ -22,7 +22,7 @@ app.set("view engine", "ejs");
 app.set("views", path.resolve("./views"));
 
 const corsOptions = {
-    origin: 'http://localhost:5173' || 'http://localhost:80' || 'http://localhost:3000', 
+    origin: process.env.FRONTEND_URL  || 'http://localhost:5173', 
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true, 
     optionsSuccessStatus: 204
@@ -43,7 +43,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/teacher', teacherRoutes);
 
 app.get('/', (req, res) => {
-    res.send('Cat');
+    res.send('Meow');
 });
 
 app.listen(PORT, () => {

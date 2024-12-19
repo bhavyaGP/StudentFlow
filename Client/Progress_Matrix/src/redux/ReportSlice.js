@@ -6,10 +6,10 @@ import Cookies from 'js-cookie';
 export const fetchReport = createAsyncThunk('report/fetchReport', async (rollno, thunkAPI) => {
   const token = Cookies.get('token');
   try {
-    const response = await axios.get(`http://localhost:3000/api/teacher/report?rollno=${rollno}`, {
+    const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/teacher/report?rollno=${rollno}`, {
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
       },
       withCredentials: true,
     });
