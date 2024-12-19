@@ -151,7 +151,7 @@ function ConverttedDate(date) {
 async function convertCSVtoJSON(csvFilePath) {
     try {
         const jsonObj = await csvtojson().fromFile(csvFilePath);
-        const jsonFilePath = `/tmp/${path.parse(csvFilePath).name}.json`; // Use /tmp for temporary storage
+        const jsonFilePath = `/uploads/${path.parse(csvFilePath).name}.json`; // Use /tmp for temporary storage
         await fs.promises.writeFile(jsonFilePath, JSON.stringify(jsonObj, null, 2));
         console.log("JSON file saved:", jsonFilePath);
         return jsonObj;
