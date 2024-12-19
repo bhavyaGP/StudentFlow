@@ -30,7 +30,6 @@ async function
             // Generate token for teacher
             token = setTeacher(user);
             res.cookie('authToken', token, {
-                httpOnly: true,
                 maxAge: 24 * 60 * 60 * 1000 // Cookie expires in 4 hours
             });
             return res.json({ message: 'Login successful. You will be redirected to the teacher dashboard.', token, user });
@@ -56,7 +55,7 @@ async function
             admin = { admin_id: adminwithschool.school_id };
             token = setAdmin(admin);
             res.cookie('authToken', token, {
-                httpOnly: true,
+                httpOnly: false,
                 maxAge: 24 * 60 * 60 * 1000
                 // maxAge: 4 * 60 * 60 * 1000
             });
