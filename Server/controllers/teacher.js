@@ -390,7 +390,8 @@ async function showsAllStudents(req, res) {
                 };
             })
         );
-
+        // console.log(students);
+        
         return res.json(students);
     } catch (error) {
         console.error('Error showing all students:', error);
@@ -638,7 +639,6 @@ FROM
             rangeCounts,
             activityData
         };
-
         return res.json(dashboardData);
 
     } catch (error) {
