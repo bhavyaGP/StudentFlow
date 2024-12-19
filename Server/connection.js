@@ -5,7 +5,8 @@ const connection = mysql2.createConnection({
     host: 'localhost',
     user: 'root',
     password: 'Bhavya#5678',
-    database: 'progressmatrix'
+    database: 'progressmatrix',
+    debug: false,
 });
 
 connection.connect((err) => {

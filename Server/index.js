@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors')
 const app = express();
-const PORT = process.env.PORT|| 5000;
+const PORT = process.env.PORT|| 3000;
 
 const morgan = require('morgan');
 require('dotenv').config();
@@ -43,7 +43,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/teacher', teacherRoutes);
 
 app.get('/', (req, res) => {
-    res.send('Cat');
+    res.send('Meow');
 });
 
 app.listen(PORT, () => {
