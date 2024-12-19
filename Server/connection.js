@@ -7,6 +7,7 @@ const connection = mysql2.createConnection({
     password: process.env.DB_PASSWORD || 'Bhavya#5678',
     database: process.env.DB_NAME || 'progressmatrix',
     debug: false,
+    connectTimeout: 20000,
 });
 
 

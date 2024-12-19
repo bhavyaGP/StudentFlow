@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors')
 const app = express();
-const PORT = process.env.PORT|| 3000;
+const PORT = process.env.PORT || 3000;
 
 const morgan = require('morgan');
 require('dotenv').config();
@@ -22,9 +22,9 @@ app.set("view engine", "ejs");
 app.set("views", path.resolve("./views"));
 
 const corsOptions = {
-    origin: process.env.FRONTEND_URL  || 'http://localhost:5173', 
+    origin: process.env.FRONTEND_URL,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true, 
+    credentials: true,
     optionsSuccessStatus: 204
 };
 
