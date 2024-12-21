@@ -10,11 +10,13 @@ const mysql2 = require('mysql2');
 // });
 
 const connection = mysql2.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'Nilayptl@23',
-    database: 'progressmatrix',
-    debug:false,
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: 'defaultdb',
+    debug: false,
+    connectTimeout: 10000,
+    port: 10566
 });
 
 connection.connect((err) => {

@@ -56,7 +56,7 @@ async function
             admin = { admin_id: adminwithschool.school_id };
             token = setAdmin(admin);
             res.cookie('authToken', token, {
-                // httpOnly: true,
+                httpOnly: false,
                 maxAge: 24 * 60 * 60 * 1000
                 // maxAge: 4 * 60 * 60 * 1000
             });

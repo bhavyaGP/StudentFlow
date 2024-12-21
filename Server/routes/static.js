@@ -6,11 +6,12 @@ const { getUser } = require('../services/auth.js');
 // router.get('/', async (req, res) => {
 //     // console.log("Home page");
 //     const token = req.cookies?.authToken;
-    
-//     const user = getUser(token);
-//     // console.log(user);
 
-   
+//     const user = getUser(token);
+  
+    
+    
+
 
 //     if (user.role === 'admin') {
 //         return res.redirect('/api/admin');
