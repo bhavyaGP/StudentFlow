@@ -1,14 +1,21 @@
 const mysql2 = require('mysql2');
 
 // Create a MySQL connection using the mysql2 library
-const connection = mysql2.createConnection({
-    host: process.env.DB_HOST || 'localhost',  // Use environment variables for deployment
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || 'Bhavya#5678',
-    database: process.env.DB_NAME || 'progressmatrix',
-    debug: false,
-});
+// const connection = mysql2.createConnection({
+//     host: process.env.DB_HOST || 'localhost',  // Use environment variables for deployment
+//     user: process.env.DB_USER || 'root',
+//     password: process.env.DB_PASSWORD || 'Nilayptl@23',
+//     database: process.env.DB_NAME || 'progressmatrix',
+//     debug: false,
+// });
 
+const connection = mysql2.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: 'Nilayptl@23',
+    database: 'progressmatrix',
+    debug:false,
+});
 
 connection.connect((err) => {
     if (err) {
