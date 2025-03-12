@@ -3,10 +3,10 @@ const mysql2 = require('mysql2');
 // Create a MySQL connection using the mysql2 library
 
 const connection = mysql2.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: 'defaultdb',
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || 'password',
+    database: 'defaultdb' || 'mydb',
     debug: false,
     connectTimeout: 10000,
     port: 10566

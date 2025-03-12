@@ -151,7 +151,7 @@ function ConverttedDate(date) {
 async function convertCSVtoJSON(csvFilePath) {
     try {
         const jsonObj = await csvtojson().fromFile(csvFilePath);
-        const jsonFilePath = `/uploads/${path.parse(csvFilePath).name}.json`; // Use /tmp for temporary storage
+        const jsonFilePath = `./uploads/${path.parse(csvFilePath).name}.json`; // Use /tmp for temporary storage
         await fs.promises.writeFile(jsonFilePath, JSON.stringify(jsonObj, null, 2));
         console.log("JSON file saved:", jsonFilePath);
         return jsonObj;
@@ -219,6 +219,8 @@ async function addstudent(req, res) {
                 if (parent_contact.trim().length < 10 || parent_contact.trim().length > 10) {
                     res.status(400).send("Parent Contact Number should be  10 characters");
                 }
+                
+                
                 return {
                     rollno: parseInt(newrollno),
                     stud_fname: stud_fname.trim(),
@@ -237,7 +239,7 @@ async function addstudent(req, res) {
             await prisma.student.createMany({
                 data: studentData
             });
-        }
+        }   
 
         res.status(200).send("Students updated successfully.");
     } catch (error) {
@@ -271,13 +273,12 @@ async function addmarks(req, res) {
         }
 
         const parsedSchoolId = parseInt(teacherSchoolId);
-        // console.log(jsonObj);
 
-        const subjects = ['ENG301', 'GUJ101', 'MATH101', 'SCI201', 'SS401'];
-
+        const subjects = ['ENG301', 'GUJ101', 'MATH101', 'SCI201', 'SS401']; 
         for (const student of jsonObj) {
             for (const subject of subjects) {
                 const rollno = parseInt(student.rollno);
+                // console.log(rollno);
                 const marks_obtained = parseInt(student[subject]) || 0;
 
                 //find the student std 
@@ -286,14 +287,13 @@ async function addmarks(req, res) {
                         rollno: rollno
                     }, select: { stud_std: true, school_id: true }
                 });
-
                 if (!studentstd) {
                     return res.status(400).send("Student not found.");
                 }
                 if (studentstd.stud_std != allocated_standard && studentstd.school_id != parsedSchoolId) {
                     return res.status(400).send("Different Standard student not allowed");
                 }
-
+                
                 // Check if the record already exists
                 const existingRecord = await prisma.grades.findFirst({
                     where: {
@@ -302,7 +302,7 @@ async function addmarks(req, res) {
                         year: new Date().getFullYear()
                     }
                 });
-
+                
                 if (existingRecord) {
                     // Update existing record with new marks
                     await prisma.grades.update({
@@ -314,6 +314,7 @@ async function addmarks(req, res) {
                         }
                     });
                 } else {
+                    
                     await prisma.grades.create({
                         data: {
                             rollno: rollno,
@@ -326,7 +327,7 @@ async function addmarks(req, res) {
                 }
             }
         }
-
+        
         res.status(200).send("Marks added or updated successfully.");
 
     } catch (error) {

@@ -40,7 +40,10 @@ async function registerTeacher(req, res) {
         const ddmmyyyyPassword = dob.split('/').join('');
 
         let username = teacher_fname;
+
         // Create the teacher without username
+        console.log(teacher_fname, teacher_lname, allocated_standard, teacher_email, parsedSchoolId, ddmmyyyyPassword, dateOfBirth, username);
+        
         let newTeacher = await prisma.teacher.create({
             data: {
                 teacher_fname,
@@ -49,14 +52,13 @@ async function registerTeacher(req, res) {
                 teacher_email,
                 school_id: parsedSchoolId,
                 password: ddmmyyyyPassword,
-                DOB: dateOfBirth,
+                DOB: dateOgfBirth,
                 username,
             },
         });
-
+        
         // Generate username
         username = teacher_fname + '@' + newTeacher.teacher_id;
-
         // Update teacher with username
         newTeacher = await prisma.teacher.update({
             where: { teacher_id: newTeacher.teacher_id },
@@ -64,7 +66,7 @@ async function registerTeacher(req, res) {
         });
 
         // Send email to teacher
-        sendMail({ to: teacher_email, teacherName: teacher_fname + " " + teacher_lname, username, password: ddmmyyyyPassword });
+        // sendMail({ to: teacher_email, teacherName: teacher_fname + " " + teacher_lname, username, password: ddmmyyyyPassword });
         res.status(201).json(newTeacher);
     } catch (error) {
         // console.error('Error creating teacher:', error);
